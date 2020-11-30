@@ -15,7 +15,7 @@ typedef Classifier* ClassifierPtr;
 ClassifierPtr createClassifier(const std::string &filename, bool verbose = false);
 
 /** Feed the feature vector to the model, execute and return the prediction */
-std::pair<int,float> classify(ClassifierPtr cls, std::vector<float> featureVector, std::string& info, bool verbose = false);
+std::pair<int,float> classify(ClassifierPtr cls, const std::vector<float>& featureVector, std::vector<float>& outVector);
 
 /** Free the classifier memory (do not use in real time threads) */
 void deleteClassifier(ClassifierPtr cls);

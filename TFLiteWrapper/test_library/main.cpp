@@ -24,11 +24,11 @@ int main(int argc, char* argv[])
     ClassifierPtr tc = createClassifier(filename);
 
     std::vector<float> my_input_vec = {1.000000,0.001555,-0.342933,-0.006383,-0.236133,-0.013969,0.127167,0.074172,0.154741,-0.037491,-0.046996,0.040371,-0.074079,0.058866,0.081011,-0.059392,-0.078424,-0.009766,0.069354,0.024080,0.031791,0.000453,-0.087566,-0.002964,0.030200}; //TODO: read this from somewhere
-
+    std::vector<float> my_output_vec(4,0.0);
 
 
     auto start = std::chrono::high_resolution_clock::now();
-    std::pair<int,float> result = classify(tc,my_input_vec);
+    std::pair<int,float> result = classify(tc,my_input_vec,my_output_vec);
     auto stop = std::chrono::high_resolution_clock::now();
 
     printf("Predicted class %d confidence: %f\n", result.first, result.second);

@@ -29,114 +29,85 @@ class Classifier
 {
 public:
     Classifier(const std::string &filename, bool verbose = false);
-    std::pair<int,float> classify(std::vector<float> featureVector, std::string& info, bool verbose = false);
+    std::pair<int,float> classify(const std::vector<float> &featureVector, std::vector<float> &out_vec);
 
 private:
     /** STEP 1 */
     std::unique_ptr<tflite::FlatBufferModel> loadModel(const std::string &filename);
     /** STEP 2 */
-    std::unique_ptr<Interpreter> buildInterpreter(const std::unique_ptr<tflite::FlatBufferModel> & model);
+    std::unique_ptr<Interpreter> buildInterpreter(const std::unique_ptr<tflite::FlatBufferModel> &model);
 
-    int maxClass(std::vector<float> vec) const;
+    int maxClass(const std::vector<float> &vec) const;
 
-    int requestedInputSize(const std::unique_ptr<Interpreter>& interpreter, bool verbose = false) const;
-    int x = 0; //Todo remove
+    int requestedInputSize(const std::unique_ptr<Interpreter> &interpreter) const;
+    int requestedOutputSize(const std::unique_ptr<Interpreter> &interpreter) const;
+
     //--------------------------------------------------------------------------
     std::unique_ptr<FlatBufferModel> model;
+    std::unique_ptr<Interpreter> interpreter;
+
+    float *inputTensorPtr, *outputTensorPtr;
 };
-
-ClassifierPtr createClassifier(const std::string &filename, bool verbose)
-{
-    ClassifierPtr cls = new Classifier(filename,verbose);
-    return cls;
-}
-
-std::pair<int,float> classify(ClassifierPtr cls, std::vector<float> featureVector, std::string& info, bool verbose)
-{
-    std::pair<int,float> ret;
-    if(cls)
-        ret = cls->classify(featureVector, info, verbose);
-    return ret;
-}
-
-void deleteClassifier(ClassifierPtr cls)
-{
-    if(cls)
-        delete cls;
-}
 
 Classifier::Classifier(const std::string &filename, bool verbose)
 {
     // Load model
     this->model = loadModel(filename);
-}
 
-std::pair<int,float> Classifier::classify(std::vector<float> featureVector, std::string& info, bool verbose)
-{
     // Build the interpreter
-    std::unique_ptr<Interpreter> interpreter = buildInterpreter(model);
+    this->interpreter = buildInterpreter(model); //TODO: move this?
     // Allocate tensor buffers.
     TFLITE_MINIMAL_CHECK(interpreter->AllocateTensors() == kTfLiteOk);
-
-    if(verbose)
-    {
-        printf("=== Pre-invoke Interpreter State ===\n");
-        tflite::PrintInterpreterState(interpreter.get());
-    }
-
     assert(interpreter != nullptr);
-    size_t requestedSize = requestedInputSize(interpreter);
-    if (featureVector.size() != requestedSize){
-        throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedSize));
-    }
 
-    // Fill input buffers
-    float* in_ptr = interpreter->typed_input_tensor<float>(0);
+    // Get pointer to the input Tensor
+    this->inputTensorPtr = interpreter->typed_input_tensor<float>(0);
+    // Get pointer to the output Tensor
+    this->outputTensorPtr = interpreter->typed_output_tensor<float>(0);
+
+    // Prime the classifier
+    std::vector<float> pIv(requestedInputSize(interpreter),0.0f);
+    std::vector<float> pOv(requestedOutputSize(interpreter),0.0f);
+    this->classify(pIv,pOv);
+    /*
+     * The priming operation SHOULD ensure that every allocation performed
+     * by the Invoke method is perfomed here and not in the real-time thread.
+     * 
+     * I'm not experienced in thread-safe programming but running this in
+     * Xenomai does not seem to cause a mode switch
+    */
+}
+
+std::pair<int,float> Classifier::classify(const std::vector<float> &featureVector, std::vector<float>& out_vec)
+{
+    size_t requestedInSize = requestedInputSize(interpreter);
+    if (featureVector.size() != requestedInSize)
+        throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize));
 
     // Fill `input`.
     for(int i=0; i<featureVector.size(); ++i)
-        in_ptr[i] = featureVector[i];
+        this->inputTensorPtr[i] = featureVector[i];
 
     // Run inference
     TFLITE_MINIMAL_CHECK(interpreter->Invoke() == kTfLiteOk);
 
-    if(verbose)
-    {
-        printf("\n\n=== Post-invoke Interpreter State ===\n");
-        tflite::PrintInterpreterState(interpreter.get());
-    }
+    size_t requestedOutSize = requestedOutputSize(interpreter);
+    if(out_vec.size() != requestedOutSize)
+        throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize));        
 
-    // Read output buffers
-    float* out_ptr = interpreter->typed_output_tensor<float>(0);
+    for(int i=0; i<out_vec.size(); ++i)
+        out_vec[i] = outputTensorPtr[i];
 
-    int output_index = interpreter->outputs()[0];
-    TfLiteIntArray* output_dims = interpreter->tensor(output_index)->dims;
-    // assume output dims to be something like (1, 1, ... ,size)
-    auto output_size = output_dims->data[output_dims->size - 1];
-
-    std::vector<float> out_vec(output_size);    //Maybe remove vector declaration here and leave only c arrays
-    for(int i=0; i<output_size; ++i)
-        out_vec[i] = out_ptr[i];
-
-    std::vector<float> softmax_vec(output_size);
+    // Softmax
     double tsum = 0;
-    for(int i=0; i<output_size; ++i)
+    for(int i=0; i<out_vec.size(); ++i)
         tsum += exp(out_vec[i]);
-    for(int i=0; i<output_size; ++i)
-        softmax_vec[i] = exp(out_vec[i])/tsum;
+    for(int i=0; i<out_vec.size(); ++i)
+        out_vec[i] = exp(out_vec[i])/tsum;
 
     int maxclass = maxClass(out_vec);
     
-    info = "predictions:\n";
-    for(int i=0; i<output_size; ++i)
-        info += (std::to_string(out_ptr[i]) + " ");
-    info += "\nsoftmax predictions:\n";
-    for(int i=0; i<output_size; ++i)
-        info += (std::to_string(softmax_vec[i]) + " ");
-    info += "\nmatch: \n" + std::to_string(maxclass);
-    info += "\nconfidence: \n" + std::to_string(softmax_vec[maxclass]);
-    
-    return std::make_pair(maxclass,softmax_vec[maxclass]);
+    return std::make_pair(maxclass,out_vec[maxclass]);
 }
 
 
@@ -163,7 +134,7 @@ std::unique_ptr<Interpreter> Classifier::buildInterpreter(const std::unique_ptr<
     return interpreter;
 }
 
-int Classifier::maxClass(std::vector<float> vec) const
+int Classifier::maxClass(const std::vector<float> &vec) const
 {
     float max = std::numeric_limits<float>::min();
     int argmax = -1;
@@ -176,7 +147,7 @@ int Classifier::maxClass(std::vector<float> vec) const
     return argmax;
 }
 
-int Classifier::requestedInputSize(const std::unique_ptr<Interpreter>& interpreter, bool verbose) const
+int Classifier::requestedInputSize(const std::unique_ptr<Interpreter>& interpreter) const
 {
     // get input dimension from the input tensor metadata
     // assuming one input only
@@ -184,7 +155,36 @@ int Classifier::requestedInputSize(const std::unique_ptr<Interpreter>& interpret
     TfLiteIntArray* dims = interpreter->tensor(input)->dims;
 
     int wanted_size = dims->data[1];
-    if(verbose)
-        printf("Inputs size requested: %d\n", wanted_size);
     return wanted_size;
+}
+
+int Classifier::requestedOutputSize(const std::unique_ptr<Interpreter>& interpreter) const
+{
+    int output_index = interpreter->outputs()[0];
+    TfLiteIntArray* output_dims = interpreter->tensor(output_index)->dims;
+    // assume output dims to be something like (1, 1, ... ,size)
+    auto output_size = output_dims->data[output_dims->size - 1];
+    return output_size;
+}
+
+/***** Handle functions *****/
+
+ClassifierPtr createClassifier(const std::string &filename, bool verbose)
+{
+    ClassifierPtr cls = new Classifier(filename,verbose);
+    return cls;
+}
+
+std::pair<int,float> classify(ClassifierPtr cls, const std::vector<float>& featureVector, std::vector<float>& outVector)
+{
+    std::pair<int,float> ret;
+    if(cls)
+        ret = cls->classify(featureVector, outVector);
+    return ret;
+}
+
+void deleteClassifier(ClassifierPtr cls)
+{
+    if(cls)
+        delete cls;
 }
