@@ -1,4 +1,5 @@
 #!/bin/bash
-
-aarch64-linux-gnu-g++ -o inference_linux_aarch64 -L/home/domenico/Develop/timbreInference/compiled_library -I/home/domenico/Develop/timbreInference/compiled_library -L/home/domenico/Develop/timbreInference/tensorflow-src/tensorflow/lite/tools/make/gen/linux_aarch64/lib main.cpp -pthread -lliteclassifier -ltensorflow-lite
+BASE="/home/cimil-01/Develop/timbreInference"
+TFLITE_LIB="/home/cimil-01/Develop/tflite-build-master20210510/linux_aarch64/lib"
+aarch64-linux-gnu-g++ -g -o inference_linux_aarch64 -L$BASE/compiled_library -I$BASE/compiled_library -L$TFLITE_LIB main.cpp -pthread -lliteclassifier -ltensorflow-lite -Wl,--no-as-needed -ldl
 

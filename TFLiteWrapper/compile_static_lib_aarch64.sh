@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TENSORFLOWBASE="/home/domenico/Develop/timbreInference/tensorflow-src/"
+TENSORFLOWBASE="/home/cimil-01/Develop/tensorflow/"
 
 header1="-I"$TENSORFLOWBASE
 header2="-I"$TENSORFLOWBASE"tensorflow/lite/tools/make/downloads/absl"
@@ -13,6 +13,3 @@ mkdir -p compiled_library
 ar rvs compiled_library/libliteclassifier.a your_library_here/classifier-lib.o
 
 cp ./your_library_here/classifier-lib.hpp ./compiled_library/liteclassifier.h
-
-
-
