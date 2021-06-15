@@ -29,9 +29,7 @@ class Classifier
 {
 public:
     Classifier(const std::string &filename, bool verbose = false);
-    // int classify_internal(const std::vector<float>& featureVector, std::vector<float>& classificationResult);
-    int classify_internal(const std::vector<float> &featureVector, std::vector<float>& out_vec);
-
+    int classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses);
 
 private:
     /** STEP 1 */
@@ -39,7 +37,7 @@ private:
     /** STEP 2 */
     std::unique_ptr<Interpreter> buildInterpreter(const std::unique_ptr<tflite::FlatBufferModel> &model);
 
-    int maxClass(const std::vector<float> &vec) const;
+    int maxClass(const float vec[], size_t vecSize) const;
 
     int requestedInputSize(const std::unique_ptr<Interpreter> &interpreter) const;
     int requestedOutputSize(const std::unique_ptr<Interpreter> &interpreter) const;
@@ -70,7 +68,7 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     // Prime the classifier
     std::vector<float> pIv(requestedInputSize(interpreter));
     std::vector<float> pOv(requestedOutputSize(interpreter));
-    this->classify_internal(pIv,pOv);
+    this->classify_internal(&pIv[0],pIv.size(),&pOv[0],pOv.size());
 
     /*
      * The priming operation should ensure that every allocation performed
@@ -78,38 +76,7 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     */
 }
 
-int Classifier::classify_internal(const std::vector<float> &featureVector, std::vector<float>& out_vec)
-{
-    size_t requestedInSize = requestedInputSize(interpreter);
-    if (featureVector.size() != requestedInSize)
-        throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize) + "(Found " +std::to_string(featureVector.size())+ "instead)");
-
-    // Fill `input`.
-    for(int i=0; i<featureVector.size(); ++i)
-        this->inputTensorPtr[i] = featureVector[i];
-
-    // Run inference
-    TFLITE_MINIMAL_CHECK(interpreter->Invoke() == kTfLiteOk);
-
-    size_t requestedOutSize = requestedOutputSize(interpreter);
-    if(out_vec.size() != requestedOutSize)
-        throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + "(Found " +std::to_string(featureVector.size())+ "instead)");        
-
-    for(int i=0; i<out_vec.size(); ++i)
-        out_vec[i] = outputTensorPtr[i];
-
-    // Softmax
-    double tsum = 0;
-    for(int i=0; i<out_vec.size(); ++i)
-        tsum += exp(out_vec[i]);
-    for(int i=0; i<out_vec.size(); ++i)
-        out_vec[i] = exp(out_vec[i])/tsum;
-
-    return maxClass(out_vec);
-}
-
-
-// int Classifier::classify_internal(const std::vector<float>& featureVector, std::vector<float>& out_vec)
+// int Classifier::classify_internal(const std::vector<float> &featureVector, std::vector<float>& out_vec)
 // {
 //     size_t requestedInSize = requestedInputSize(interpreter);
 //     if (featureVector.size() != requestedInSize)
@@ -135,9 +102,39 @@ int Classifier::classify_internal(const std::vector<float> &featureVector, std::
 //         tsum += exp(out_vec[i]);
 //     for(int i=0; i<out_vec.size(); ++i)
 //         out_vec[i] = exp(out_vec[i])/tsum;
-    
+
 //     return maxClass(out_vec);
 // }
+
+int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses)
+{
+    size_t requestedInSize = requestedInputSize(interpreter);
+    if (numFeatures != requestedInSize)
+        throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize) + " (Found " +std::to_string(numFeatures)+ " instead)");
+
+    // Fill `input`.
+    for(int i=0; i<numFeatures; ++i)
+        this->inputTensorPtr[i] = featureVector[i];
+
+    // Run inference
+    TFLITE_MINIMAL_CHECK(interpreter->Invoke() == kTfLiteOk);
+
+    size_t requestedOutSize = requestedOutputSize(interpreter);
+    if(numClasses != requestedOutSize)
+        throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + " (Found " +std::to_string(numClasses)+ " instead)");        
+
+    for(int i=0; i<numClasses; ++i)
+        outputVector[i] = outputTensorPtr[i];
+
+    // Softmax
+    double tsum = 0;
+    for(int i=0; i<numClasses; ++i)
+        tsum += exp(outputVector[i]);
+    for(int i=0; i<numClasses; ++i)
+        outputVector[i] = exp(outputVector[i])/tsum;
+
+    return maxClass(outputVector, numClasses);
+}
 
 /** STEP 1 */
 std::unique_ptr<tflite::FlatBufferModel> Classifier::loadModel(const std::string &filename)
@@ -162,11 +159,11 @@ std::unique_ptr<Interpreter> Classifier::buildInterpreter(const std::unique_ptr<
     return interpreter;
 }
 
-int Classifier::maxClass(const std::vector<float> &vec) const
+int Classifier::maxClass(const float vec[], size_t vecSize) const
 {
     float max = std::numeric_limits<float>::min();
     int argmax = -1;
-    for(int i = 0; i < vec.size(); ++i) {
+    for(int i = 0; i < vecSize; ++i) {
         if(vec[i] > max) {
             argmax = i;
             max = vec[i];
@@ -205,11 +202,16 @@ ClassifierPtr createClassifier (const std::string &filename, bool verbose)
 
 int classify(ClassifierPtr cls, const std::vector<float>& featureVector, std::vector<float>& outVector)
 {
-    return cls->classify_internal(featureVector, outVector);
+    return cls->classify_internal(&featureVector[0], featureVector.size(), &outVector[0], outVector.size());
 }
 
 void deleteClassifier(ClassifierPtr cls)
 {
     if(cls)
         delete cls;
+}
+
+int classify(ClassifierPtr cls, const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses)
+{
+    return cls->classify_internal(featureVector, numFeatures, outputVector, numClasses);
 }
