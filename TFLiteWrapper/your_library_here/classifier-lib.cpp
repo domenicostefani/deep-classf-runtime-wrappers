@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <utility>
 #include <limits>       // std::numeric_limits
-#include <chrono>  //TODO: remove
 
 #include "tensorflow/lite/interpreter.h"
 #include "tensorflow/lite/kernels/register.h"
@@ -25,24 +24,31 @@ using namespace tflite;
         exit(1);                                                 \
     }
 
+// Definition of the classifier class
 class Classifier
 {
 public:
+    /** Constructor */
     Classifier(const std::string &filename, bool verbose = false);
+    /** Internal classification function, called by wrappers */
     int classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses);
 
 private:
-    /** STEP 1 */
+    /** Step 1, TFLITE loading the .tflite model */
     std::unique_ptr<tflite::FlatBufferModel> loadModel(const std::string &filename);
-    /** STEP 2 */
+    /** Step 2, TFLITE building the interpreter */
     std::unique_ptr<Interpreter> buildInterpreter(const std::unique_ptr<tflite::FlatBufferModel> &model);
 
-    int maxClass(const float vec[], size_t vecSize) const;
+    /** ind the index of the maximum value in an array */
+    int argmax(const float vec[], size_t vecSize) const;
 
+    /** Check the input size requested by a tflite model */
     int requestedInputSize(const std::unique_ptr<Interpreter> &interpreter) const;
+    /** Check the output size requested by a tflite model */
     int requestedOutputSize(const std::unique_ptr<Interpreter> &interpreter) const;
 
     //--------------------------------------------------------------------------
+
     std::unique_ptr<FlatBufferModel> model;
     std::unique_ptr<Interpreter> interpreter;
 
@@ -55,7 +61,7 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     this->model = loadModel(filename);
 
     // Build the interpreter
-    this->interpreter = buildInterpreter(model); //TODO: move this?
+    this->interpreter = buildInterpreter(model);
     // Allocate tensor buffers.
     TFLITE_MINIMAL_CHECK(interpreter->AllocateTensors() == kTfLiteOk);
     assert(interpreter != nullptr);
@@ -75,36 +81,6 @@ Classifier::Classifier(const std::string &filename, bool verbose)
      * by the Invoke method is perfomed here and not in the real-time thread.
     */
 }
-
-// int Classifier::classify_internal(const std::vector<float> &featureVector, std::vector<float>& out_vec)
-// {
-//     size_t requestedInSize = requestedInputSize(interpreter);
-//     if (featureVector.size() != requestedInSize)
-//         throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize) + "(Found " +std::to_string(featureVector.size())+ "instead)");
-
-//     // Fill `input`.
-//     for(int i=0; i<featureVector.size(); ++i)
-//         this->inputTensorPtr[i] = featureVector[i];
-
-//     // Run inference
-//     TFLITE_MINIMAL_CHECK(interpreter->Invoke() == kTfLiteOk);
-
-//     size_t requestedOutSize = requestedOutputSize(interpreter);
-//     if(out_vec.size() != requestedOutSize)
-//         throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + "(Found " +std::to_string(featureVector.size())+ "instead)");        
-
-//     for(int i=0; i<out_vec.size(); ++i)
-//         out_vec[i] = outputTensorPtr[i];
-
-//     // Softmax
-//     double tsum = 0;
-//     for(int i=0; i<out_vec.size(); ++i)
-//         tsum += exp(out_vec[i]);
-//     for(int i=0; i<out_vec.size(); ++i)
-//         out_vec[i] = exp(out_vec[i])/tsum;
-
-//     return maxClass(out_vec);
-// }
 
 int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses)
 {
@@ -133,7 +109,7 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     for(int i=0; i<numClasses; ++i)
         outputVector[i] = exp(outputVector[i])/tsum;
 
-    return maxClass(outputVector, numClasses);
+    return argmax(outputVector, numClasses);
 }
 
 /** STEP 1 */
@@ -159,7 +135,7 @@ std::unique_ptr<Interpreter> Classifier::buildInterpreter(const std::unique_ptr<
     return interpreter;
 }
 
-int Classifier::maxClass(const float vec[], size_t vecSize) const
+int Classifier::argmax(const float vec[], size_t vecSize) const
 {
     float max = std::numeric_limits<float>::min();
     int argmax = -1;
@@ -198,11 +174,6 @@ int Classifier::requestedOutputSize(const std::unique_ptr<Interpreter>& interpre
 ClassifierPtr createClassifier (const std::string &filename, bool verbose)
 {
     return new Classifier(filename,verbose);
-}
-
-int classify(ClassifierPtr cls, const std::vector<float>& featureVector, std::vector<float>& outVector)
-{
-    return cls->classify_internal(&featureVector[0], featureVector.size(), &outVector[0], outVector.size());
 }
 
 void deleteClassifier(ClassifierPtr cls)
