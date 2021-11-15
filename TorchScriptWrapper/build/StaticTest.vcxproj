@@ -1,0 +1,341 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FE271DD1-0F39-363B-800D-91E44081F743}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>StaticTest</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">StaticTest.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">StaticTest</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">StaticTest.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">StaticTest</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">StaticTest.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">StaticTest</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">StaticTest.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">StaticTest</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <DisableSpecificWarnings>4267;4251;4522;4838;4305;4244;4190;4101;4996;4275</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>Debug\libtorchclassifier.lib;D:\cpplibs\libtorch\lib\torch.lib;D:\cpplibs\libtorch\lib\torch_cpu.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\kineto.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/Debug/StaticTest.lib</ImportLibrary>
+      <ProgramDataBaseFile>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/Debug/StaticTest.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DisableSpecificWarnings>4267;4251;4522;4838;4305;4244;4190;4101;4996;4275</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>Release\libtorchclassifier.lib;D:\cpplibs\libtorch\lib\torch.lib;D:\cpplibs\libtorch\lib\torch_cpu.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\kineto.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/Release/StaticTest.lib</ImportLibrary>
+      <ProgramDataBaseFile>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/Release/StaticTest.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DisableSpecificWarnings>4267;4251;4522;4838;4305;4244;4190;4101;4996;4275</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>MinSizeRel\libtorchclassifier.lib;D:\cpplibs\libtorch\lib\torch.lib;D:\cpplibs\libtorch\lib\torch_cpu.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\kineto.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/MinSizeRel/StaticTest.lib</ImportLibrary>
+      <ProgramDataBaseFile>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/MinSizeRel/StaticTest.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <DisableSpecificWarnings>4267;4251;4522;4838;4305;4244;4190;4101;4996;4275</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;USE_DISTRIBUTED;USE_C10D_GLOO;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\cpplibs\libtorch\include;D:\cpplibs\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>RelWithDebInfo\libtorchclassifier.lib;D:\cpplibs\libtorch\lib\torch.lib;D:\cpplibs\libtorch\lib\torch_cpu.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\c10.lib;D:\cpplibs\libtorch\lib\kineto.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/RelWithDebInfo/StaticTest.lib</ImportLibrary>
+      <ProgramDataBaseFile>D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/RelWithDebInfo/StaticTest.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" "-SD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper" "-BD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build" --check-stamp-file "D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckCSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckIncludeFile.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckLibraryExists.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageHandleStandardArgs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageMessage.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindThreads.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Internal\CheckSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\WindowsPaths.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCXXCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeRCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeSystem.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Config.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2ConfigVersion.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets-release.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkl.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkldnn.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\threads.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\utils.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfig.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfigVersion.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" "-SD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper" "-BD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build" --check-stamp-file "D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckCSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckIncludeFile.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckLibraryExists.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageHandleStandardArgs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageMessage.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindThreads.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Internal\CheckSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\WindowsPaths.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCXXCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeRCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeSystem.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Config.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2ConfigVersion.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets-release.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkl.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkldnn.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\threads.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\utils.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfig.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfigVersion.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" "-SD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper" "-BD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build" --check-stamp-file "D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckCSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckIncludeFile.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckLibraryExists.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageHandleStandardArgs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageMessage.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindThreads.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Internal\CheckSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\WindowsPaths.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCXXCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeRCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeSystem.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Config.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2ConfigVersion.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets-release.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkl.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkldnn.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\threads.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\utils.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfig.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfigVersion.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" "-SD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper" "-BD:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build" --check-stamp-file "D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckCSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckIncludeFile.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\CheckLibraryExists.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageHandleStandardArgs.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindPackageMessage.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\FindThreads.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Internal\CheckSourceCompiles.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.21\Modules\Platform\WindowsPaths.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeCXXCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeRCCompiler.cmake;D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\3.21.2\CMakeSystem.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Config.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2ConfigVersion.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets-release.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\Caffe2Targets.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkl.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\mkldnn.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\threads.cmake;D:\cpplibs\libtorch\share\cmake\Caffe2\public\utils.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfig.cmake;D:\cpplibs\libtorch\share\cmake\Torch\TorchConfigVersion.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\test_library\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\ZERO_CHECK.vcxproj">
+      <Project>{593EA3F4-FFE2-306A-89C3-593374F95856}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\Simone\Documents\UniTN\Project Course\torchscript-interpreter-wrapper\build\libtorchclassifier.vcxproj">
+      <Project>{46A0668E-EAAD-3DA9-B85F-C759304DC317}</Project>
+      <Name>libtorchclassifier</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

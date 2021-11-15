@@ -1,0 +1,4 @@
+D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/StaticTest.dir
+D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/libtorchclassifier.dir
+D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/ALL_BUILD.dir
+D:/Simone/Documents/UniTN/Project Course/torchscript-interpreter-wrapper/build/CMakeFiles/ZERO_CHECK.dir
