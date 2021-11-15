@@ -15,7 +15,11 @@ ADD_LIBRARY( ${LIB_NAME} STATIC
 
 target_link_libraries(${LIB_NAME} "${TORCH_LIBRARIES}")
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 14)
-
+set_target_properties( ${LIB_NAME}
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/the_compiled_library"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/the_compiled_library"
+)
 
 # CMake instructions to test using the static lib
 
@@ -26,3 +30,9 @@ ADD_EXECUTABLE( ${APP_EXE}
 
 TARGET_LINK_LIBRARIES( ${APP_EXE}
                         ${LIB_NAME} )
+include_directories(the_compiled_library)
+
+set_target_properties( ${APP_EXE}
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/test_library"
+)

@@ -12,15 +12,6 @@
 
 #include "torch/script.h"
 
-#define LOG(x) std::cerr
-
-#define TFLITE_MINIMAL_CHECK(x)                                  \
-    if (!(x))                                                    \
-    {                                                            \
-        fprintf(stderr, "Error at %s:%d\n", __FILE__, __LINE__); \
-        exit(1);                                                 \
-    } // TODO: check if needed
-
 // Definition of the classifier class
 class Classifier
 {
@@ -95,7 +86,9 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     if (numClasses != requestedOutSize)
         throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + " (Found " + std::to_string(numClasses) + " instead)");
 
-    outputVector = this->output_.data_ptr<float>();
+    // Copy output
+    for (int i = 0; i < numClasses; ++i)
+        outputVector[i] = this->output_[0][i].item<float>();
 
     // Softmax
     double tsum = 0;
@@ -104,7 +97,7 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     for (int i = 0; i < numClasses; ++i)
         outputVector[i] = exp(outputVector[i]) / tsum;
 
-    return argmax(this->output_.data_ptr<float>(), numClasses);
+    return argmax(outputVector, numClasses);
 }
 
 /** STEP 1 */
@@ -117,7 +110,7 @@ torch::jit::Module *Classifier::loadModel(const std::string &filename)
     }
     catch (const c10::Error &e)
     {
-        LOG("Error loading the model.\n");
+        std::cerr << ("Error loading the model.\n");
         return false;
     }
     torch::jit::Module *model = new torch::jit::Module(module);
