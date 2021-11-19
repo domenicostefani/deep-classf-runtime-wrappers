@@ -1,11 +1,5 @@
 /*
- * TFlite Classifier library
- * Author: Domenico Stefani (domenico.stefani96@gmail.com)
- * 
- * This header exposes the functions used to run inference with TFLite.
- * To see how to use it, check test_library/main.cpp
- * 
- * The structure is a bit convoluted since it used an opaque pointer (to avoid having to include many headers later) 
+ * torchscript wrapper library
  * 
 */
 #pragma once

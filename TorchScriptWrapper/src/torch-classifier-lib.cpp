@@ -1,6 +1,6 @@
 /*
 ==============================================================================*/
-#include "classifier-lib.hpp"
+#include "torch-classifier-lib.h"
 
 #include <cstdio>
 #include <iostream>
@@ -111,7 +111,8 @@ torch::jit::Module *Classifier::loadModel(const std::string &filename)
     catch (const c10::Error &e)
     {
         std::cerr << ("Error loading the model.\n");
-        return false;
+        throw std::logic_error("Error loading the model.");
+        // return false; TODO FIX
     }
     torch::jit::Module *model = new torch::jit::Module(module);
     return model;

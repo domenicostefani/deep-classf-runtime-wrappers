@@ -5,12 +5,12 @@
 #include <cassert>
 #include <algorithm>
 #include <utility>
-#include <limits>       // std::numeric_limits>
+#include <limits>
 #include <array>
-#include <chrono>  //TODO: remove
+#include <chrono>
 #include <cstdlib>
 
-#include "torchclassifier.h"
+#include "torch-classifier-lib.h"
 
 const std::size_t IN_SIZE = 180,
                   OUT_SIZE = 8;
