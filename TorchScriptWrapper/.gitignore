@@ -2,3 +2,4 @@ tensorflow-src
 .vscode
 .o
 build
+libs/libtorch-elk-v1.10.0/*

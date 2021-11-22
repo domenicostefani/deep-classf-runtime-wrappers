@@ -5,7 +5,7 @@ set(LIB_NAME torchclassifier)
 project(${LIB_NAME} VERSION 0.1.0)
 
 # change path to libtorch location
-set(CMAKE_PREFIX_PATH "/home/cimil-01/Develop/libtorch")
+set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs/libtorch-elk-v1.10.0")
 
 find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
