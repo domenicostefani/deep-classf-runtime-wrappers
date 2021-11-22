@@ -5,13 +5,14 @@ set(LIB_NAME torchclassifier)
 project(${LIB_NAME} VERSION 0.1.0)
 
 # change path to libtorch location
-set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs/libtorch-elk-v1.10.0")
+set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs/libtorch/")
+message(STATUS "Torch dir selected: ${CMAKE_PREFIX_PATH}")
 
 find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 ADD_LIBRARY( ${LIB_NAME} STATIC
-             src/torch-classifier-lib.cpp )
+             ${CMAKE_CURRENT_SOURCE_DIR}/src/torch-classifier-lib.cpp )
 
 target_link_libraries(${LIB_NAME} "${TORCH_LIBRARIES}")
 # set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 14)
@@ -26,7 +27,7 @@ target_link_libraries(${LIB_NAME} "${TORCH_LIBRARIES}")
 SET( APP_EXE test-torch-lib )
 
 ADD_EXECUTABLE( ${APP_EXE}
-                src/testlib.cpp ) 
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/testlib.cpp ) 
 
 TARGET_LINK_LIBRARIES( ${APP_EXE}
                         ${LIB_NAME} )
