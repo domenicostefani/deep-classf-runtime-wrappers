@@ -61,7 +61,9 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     // Prime the classifier
     std::vector<float> pIv(requestedInputSize(this->model));
     std::vector<float> pOv(requestedOutputSize(this->model));
-    this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
+
+    for(int j=0; j < 5; ++j)
+        this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
 
     /*
      * The priming operation should ensure that every allocation performed
@@ -71,12 +73,15 @@ Classifier::Classifier(const std::string &filename, bool verbose)
 
 int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses)
 {
+    // Guard to enable inference mode in current scope
+    c10::InferenceMode guard;
+
     size_t requestedInSize = requestedInputSize(this->model);
     if (numFeatures != requestedInSize)
         throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize) + " (Found " + std::to_string(numFeatures) + " instead)");
 
     // Fill `input`.
-    for (int i = 0; i < numFeatures; ++i)
+    for (size_t i = 0; i < numFeatures; ++i)
         this->input_data_[i] = featureVector[i];
 
     // Run inference
@@ -87,14 +92,14 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
         throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + " (Found " + std::to_string(numClasses) + " instead)");
 
     // Copy output
-    for (int i = 0; i < numClasses; ++i)
+    for (size_t i = 0; i < numClasses; ++i)
         outputVector[i] = this->output_[0][i].item<float>();
 
     // Softmax
     double tsum = 0;
-    for (int i = 0; i < numClasses; ++i)
+    for (size_t i = 0; i < numClasses; ++i)
         tsum += exp(outputVector[i]);
-    for (int i = 0; i < numClasses; ++i)
+    for (size_t i = 0; i < numClasses; ++i)
         outputVector[i] = exp(outputVector[i]) / tsum;
 
     return argmax(outputVector, numClasses);
@@ -129,7 +134,7 @@ int Classifier::argmax(const float vec[], size_t vecSize) const
 {
     float max = std::numeric_limits<float>::min();
     int argmax = -1;
-    for (int i = 0; i < vecSize; ++i)
+    for (size_t i = 0; i < vecSize; ++i)
     {
         if (vec[i] > max)
         {

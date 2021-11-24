@@ -1,0 +1,63 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_dd6ce/fast && /usr/bin/make -f CMakeFiles/cmTC_dd6ce.dir/build.make CMakeFiles/cmTC_dd6ce.dir/build
+make[1]: Entering directory '/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_dd6ce.dir/src.c.o
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-elk-linux/aarch64-elk-linux-gcc   -mcpu=cortex-a72+crc+crypto   -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security --sysroot=/opt/elk/1.0/sysroots/aarch64-elk-linux   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_dd6ce.dir/src.c.o   -c /home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp/src.c
+In file included from /opt/elk/1.0/sysroots/aarch64-elk-linux/usr/include/pthread.h:21,
+                 from /home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp/src.c:1:
+/opt/elk/1.0/sysroots/aarch64-elk-linux/usr/include/features.h:397:4: warning: #warning _FORTIFY_SOURCE requires compiling with optimization (-O) [-Wcpp]
+  397 | #  warning _FORTIFY_SOURCE requires compiling with optimization (-O)
+      |    ^~~~~~~
+Linking C executable cmTC_dd6ce
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dd6ce.dir/link.txt --verbose=1
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-elk-linux/aarch64-elk-linux-gcc   -mcpu=cortex-a72+crc+crypto   -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security --sysroot=/opt/elk/1.0/sysroots/aarch64-elk-linux  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_dd6ce.dir/src.c.o  -o cmTC_dd6ce 
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/libexec/aarch64-elk-linux/gcc/aarch64-elk-linux/9.3.0/real-ld: CMakeFiles/cmTC_dd6ce.dir/src.c.o: in function `main':
+src.c:(.text+0x34): undefined reference to `pthread_create'
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/libexec/aarch64-elk-linux/gcc/aarch64-elk-linux/9.3.0/real-ld: src.c:(.text+0x3c): undefined reference to `pthread_detach'
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/libexec/aarch64-elk-linux/gcc/aarch64-elk-linux/9.3.0/real-ld: src.c:(.text+0x48): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_dd6ce.dir/build.make:87: cmTC_dd6ce] Error 1
+make[1]: Leaving directory '/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_dd6ce/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_82e07/fast && /usr/bin/make -f CMakeFiles/cmTC_82e07.dir/build.make CMakeFiles/cmTC_82e07.dir/build
+make[1]: Entering directory '/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_82e07.dir/CheckFunctionExists.c.o
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-elk-linux/aarch64-elk-linux-gcc   -mcpu=cortex-a72+crc+crypto   -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security --sysroot=/opt/elk/1.0/sysroots/aarch64-elk-linux   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_82e07.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
+Linking C executable cmTC_82e07
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_82e07.dir/link.txt --verbose=1
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-elk-linux/aarch64-elk-linux-gcc   -mcpu=cortex-a72+crc+crypto   -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security --sysroot=/opt/elk/1.0/sysroots/aarch64-elk-linux  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_82e07.dir/CheckFunctionExists.c.o  -o cmTC_82e07  -lpthreads 
+/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/libexec/aarch64-elk-linux/gcc/aarch64-elk-linux/9.3.0/real-ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_82e07.dir/build.make:87: cmTC_82e07] Error 1
+make[1]: Leaving directory '/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_82e07/fast] Error 2
+
+
+

@@ -1,5 +1,4 @@
 tensorflow-src
 .vscode
 .o
-build/
 libs/libtorch/
