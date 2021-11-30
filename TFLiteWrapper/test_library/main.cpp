@@ -10,7 +10,7 @@
 #include <chrono>  //TODO: remove
 #include <cstdlib>
 
-#include "liteclassifier.h"
+#include "classifier-lib.hpp"
 
 const std::size_t IN_SIZE = 190,
                   OUT_SIZE = 8;
