@@ -19,7 +19,7 @@ include_directories(libs/onnxruntime/include)
 ADD_LIBRARY( ${LIB_NAME} STATIC
              ${CMAKE_CURRENT_SOURCE_DIR}/src/onnx-classifier-lib.cpp )
 
-target_link_libraries(${LIB_NAME} libs/onnxruntime/lib/libonnxruntime.so)
+target_link_libraries(${LIB_NAME} ${CMAKE_SOURCE_DIR}/libs/onnxruntime/lib/libonnxruntime.so)
 
 
 # CMake instructions to test using the static lib

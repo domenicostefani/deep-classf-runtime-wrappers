@@ -7,6 +7,8 @@
 #include <cassert>
 #include <algorithm>
 #include <utility>
+#include <cmath>
+#include <numeric>
 #include <limits> // std::numeric_limits
 #include <vector>
 
@@ -16,7 +18,8 @@
 template <typename T>
 T vectorProduct(const std::vector<T>& v)
 {
-    return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
+    
+    return std::accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
 }
 
 // Definition of the classifier class
@@ -56,9 +59,10 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     this->session = loadModel(filename);
 
     Ort::AllocatorWithDefaultOptions allocator;
-
+    /*
     size_t numInputNodes = session->GetInputCount();
     size_t numOutputNodes = session->GetOutputCount();
+    */
 
     const char* inputName = session->GetInputName(0, allocator);
     Ort::TypeInfo inputTypeInfo = session->GetInputTypeInfo(0);
@@ -97,7 +101,7 @@ Classifier::Classifier(const std::string &filename, bool verbose)
 
     for(int j=0; j < 5; ++j)
         this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
-
+    */
     /*
      * The priming operation should ensure that every allocation performed
      * by the Invoke method is perfomed here and not in the real-time thread.
@@ -130,11 +134,11 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
         outputVector[i] = outputTensorValues.at(i);
 
     // Softmax
-    double tsum = 0;
+    float tsum = 0;
     for (size_t i = 0; i < numClasses; ++i)
-        tsum += exp(outputVector[i]);
+        tsum += std::exp(outputVector[i]);
     for (size_t i = 0; i < numClasses; ++i)
-        outputVector[i] = exp(outputVector[i]) / tsum;
+        outputVector[i] = std::exp(outputVector[i]) / tsum;
 
     return argmax(outputVector, numClasses);
 }
