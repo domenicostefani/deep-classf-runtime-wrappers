@@ -94,17 +94,15 @@ Classifier::Classifier(const std::string &filename, bool verbose)
         memoryInfo, outputTensorValues.data(), outputTensorSize,
         outputDims.data(), outputDims.size()));
 
-    /*
+    
     // Prime the classifier
     std::vector<float> pIv(inputTensorSize);
     std::vector<float> pOv(outputTensorSize);
 
-    for(int j=0; j < 5; ++j)
-        this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
-    */
+    this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
     /*
      * The priming operation should ensure that every allocation performed
-     * by the Invoke method is perfomed here and not in the real-time thread.
+     * by the Run method is perfomed here and not in the real-time thread.
     */
 }
 
