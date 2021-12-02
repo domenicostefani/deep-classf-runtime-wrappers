@@ -11,6 +11,8 @@
 #include <numeric>
 #include <limits> // std::numeric_limits
 #include <vector>
+#include <iomanip>
+#include <sstream>
 
 #include "onnxruntime_cxx_api.h"
 
@@ -18,8 +20,26 @@
 template <typename T>
 T vectorProduct(const std::vector<T>& v)
 {
-    
     return std::accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
+}
+
+/** Function to pretty print a vector */
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
+{
+    std::stringstream stream;
+    stream << "[";
+    for (size_t i = 0; i < v.size(); ++i)
+    {
+        stream << v[i];
+        if (i != v.size() - 1)
+        {
+            stream << ", ";
+        }
+    }
+    stream << "]";
+    os << stream.str();
+    return os;
 }
 
 // Definition of the classifier class
@@ -56,13 +76,22 @@ private:
 Classifier::Classifier(const std::string &filename, bool verbose)
 {
     // Load model
+    if (verbose)
+    {
+        std::cout << std::setfill('-') << std::setw(40) << "" << std::endl;
+        std::cout << "Creating environment..." << std::endl;
+    }
     this->session = loadModel(filename);
+    if (verbose)
+    {
+        std::cout << "Model loaded successfully." << std::endl;
+        std::cout << "File: " << filename << std::endl;
+    }
 
     Ort::AllocatorWithDefaultOptions allocator;
-    /*
+
     size_t numInputNodes = session->GetInputCount();
     size_t numOutputNodes = session->GetOutputCount();
-    */
 
     const char* inputName = session->GetInputName(0, allocator);
     Ort::TypeInfo inputTypeInfo = session->GetInputTypeInfo(0);
@@ -75,7 +104,38 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     auto outputTensorInfo = outputTypeInfo.GetTensorTypeAndShapeInfo();
     ONNXTensorElementDataType outputType = outputTensorInfo.GetElementType();
     std::vector<int64_t> outputDims = outputTensorInfo.GetShape();
+    
 
+    if (verbose)
+    {
+        std::cout << std::setfill('-') << std::setw(40) << "" << std::endl;
+
+        std::cout << std::endl;
+
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Number of Input Nodes: " << std::right << std::setfill('.') << std::setw(10) << numInputNodes << std::endl;
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Input Name: " << std::right << std::setfill('.') << std::setw(10) << inputName << std::endl;
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Input Type: " << std::right << std::setfill('.') << std::setw(10) << inputType << std::endl;
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Input Dimensions: " << std::right << std::setfill('.') << std::setw(10) << inputDims << std::endl;
+
+        std::cout << std::endl;
+
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Number of Output Nodes: " << std::right << std::setfill('.') << std::setw(10) << numOutputNodes << std::endl;
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Output Name: " << std::right << std::setfill('.') << std::setw(10) << outputName << std::endl;
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Output Type: " << std::right << std::setfill('.') << std::setw(10) << outputType << std::endl;
+        std::cout << std::left << std::setfill('.') << std::setw(30)
+            << "Output Dimensions: " << std::right << std::setfill('.') << std::setw(10) << outputDims << std::endl;
+
+        std::cout << std::endl;
+
+        std::cout << std::setfill('-') << std::setw(40) << "" << std::endl;
+    }
 
     inputTensorSize = vectorProduct(inputDims);
     inputTensorValues = std::vector<float>(inputTensorSize);
