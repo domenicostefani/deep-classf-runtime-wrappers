@@ -42,3 +42,5 @@ build/CMakeFiles/test-onnx-lib.dir/flags.make
 build/CMakeFiles/test-onnx-lib.dir/link.txt
 build/CMakeFiles/test-onnx-lib.dir/progress.make
 build/CMakeFiles/test-onnx-lib.dir/src/testlib.cpp.o
+workspace.code-workspace
+build/optimized_model.onnx.tmp

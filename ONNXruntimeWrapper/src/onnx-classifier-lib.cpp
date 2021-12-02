@@ -205,6 +205,8 @@ Ort::Session *Classifier::loadModel(const std::string &filename)
 {
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "onnx-test");
     Ort::SessionOptions session_options;
+    session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+    session_options.SetOptimizedModelFilePath("optimized_model.onnx.tmp");
     return new Ort::Session(env, filename.c_str(), session_options);
 }
 
