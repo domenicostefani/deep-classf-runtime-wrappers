@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        fprintf(stderr, "USAGE:\ninference_x86_64 <tflite model path> \n");
+        fprintf(stderr, "USAGE:\ntest-onnx-lib <onnx model path> \n");
         return 1;
     }
     const char* filename_cstr = argv[1];
