@@ -1,1 +1,0 @@
-/usr/bin/c++  -DEIGEN_STACK_ALLOCATION_LIMIT=0 -O3  -rdynamic CMakeFiles/test-RTNeural-lib.dir/src/testlib.cpp.o  -o test-RTNeural-lib  librtneuralclassifier.a libs/RTNeural/libRTNeural.a 

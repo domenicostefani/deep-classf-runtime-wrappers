@@ -1,2 +1,0 @@
-/usr/bin/ar qc librtneuralclassifier.a  CMakeFiles/rtneuralclassifier.dir/src/RTNeural-classifier-lib.cpp.o
-/usr/bin/ranlib librtneuralclassifier.a
