@@ -1,1 +1,1 @@
-# cpp onnx wrapper
+# cpp RTNeural wrapper
