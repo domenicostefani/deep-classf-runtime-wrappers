@@ -1,0 +1,95 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						1,
+						2
+					]
+				},
+				{
+					"build" : "libs/RTNeural",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "libs/RTNeural",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "rtneuralclassifier",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "RTNeural::@d7b759c67a07e770e629",
+					"jsonFile" : "target-RTNeural-Release-97e73436ec86d58e215d.json",
+					"name" : "RTNeural",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rtneuralclassifier::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rtneuralclassifier-Release-2be2d20011a1d992b451.json",
+					"name" : "rtneuralclassifier",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test-RTNeural-lib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test-RTNeural-lib-Release-92fd8fefd6dcc526ee53.json",
+					"name" : "test-RTNeural-lib",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/mnt/d/Simone/Documents/UniTN/Project Course/RTNeural-interpreter-wrapper/build",
+		"source" : "/mnt/d/Simone/Documents/UniTN/Project Course/RTNeural-interpreter-wrapper"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}

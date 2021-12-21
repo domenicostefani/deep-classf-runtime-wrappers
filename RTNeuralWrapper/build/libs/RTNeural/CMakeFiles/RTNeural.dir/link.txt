@@ -1,0 +1,2 @@
+/usr/bin/ar qc libRTNeural.a  CMakeFiles/RTNeural.dir/RTNeural.cpp.o
+/usr/bin/ranlib libRTNeural.a
