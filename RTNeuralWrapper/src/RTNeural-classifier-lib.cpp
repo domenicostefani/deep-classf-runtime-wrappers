@@ -16,6 +16,7 @@
 
 #include "RTNeural.h"
 
+#ifdef USE_COMPILE_TIME_API
 typedef RTNeural::ModelT<float, 173, 8,
         RTNeural::DenseT<float, 173, 350>,
         RTNeural::ReLuActivationT<float, 350>,
@@ -30,6 +31,11 @@ typedef RTNeural::ModelT<float, 173, 8,
         RTNeural::DenseT<float, 350, 350>,
         RTNeural::ReLuActivationT<float, 350>,
         RTNeural::DenseT<float, 350, 8>> model_t;
+typedef model_t * model_ptr;
+#else
+typedef RTNeural::Model<float> model_t;
+typedef std::unique_ptr<model_t, std::default_delete<model_t>> model_ptr;
+#endif
 
 // Definition of the classifier class
 class Classifier
@@ -44,13 +50,13 @@ public:
 
 private:
     /** Load the .onnx model and create inference session */
-    model_t *loadModel(const std::string &filename, bool verbose=false);
+    model_ptr loadModel(const std::string &filename, bool verbose=false);
 
     /** ind the index of the maximum value in an array */
     int argmax(const float vec[], size_t vecSize) const;
 
     //--------------------------------------------------------------------------
-    model_t *model;
+    model_ptr model;
 
     size_t inputTensorSize = 173;
     size_t outputTensorSize = 8;
@@ -93,7 +99,9 @@ Classifier::Classifier(const std::string &filename, bool verbose)
 }
 
 Classifier::~Classifier() {
+#ifdef USE_COMPILE_TIME_API
     delete this->model;
+#endif
 }
 
 int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses)
@@ -120,42 +128,31 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
             max_out = outputVector[i];
     }
 
-    for(size_t i = 0; i < 8; i++)
-    {
-        std::cout << "Output_before_softmax[" << i << "] = " << outputVector[i] << std::endl;
-    }
-
     // Normalize output for stable softmax
     for (size_t i = 0; i < numClasses; ++i)
         outputVector[i] -= max_out;
-
-    for(size_t i = 0; i < 8; i++)
-    {
-        std::cout << "Output_normalized_for_softmax[" << i << "] = " << outputVector[i] << std::endl;
-    }
 
     // Softmax
     float tsum = 0;
     for (size_t i = 0; i < numClasses; ++i)
         tsum += std::exp(outputVector[i]);
-    std::cout << "tsum = " << tsum << std::endl;
     for (size_t i = 0; i < numClasses; ++i)
         outputVector[i] = std::exp(outputVector[i]) / tsum;
-
-    for(size_t i = 0; i < 8; i++)
-    {
-        std::cout << "Output_after_softmax[" << i << "] = " << outputVector[i] << std::endl;
-    }
 
     return argmax(outputVector, numClasses);
 }
 
-model_t *Classifier::loadModel(const std::string &filename, bool verbose)
+model_ptr Classifier::loadModel(const std::string &filename, bool verbose)
 {
-    auto modelT = new model_t;
     std::ifstream jsonStream(filename, std::ifstream::binary);
+#ifdef USE_COMPILE_TIME_API
+    auto modelT = new model_t;
     modelT->parseJson(jsonStream, verbose);
     return modelT;
+#else
+    auto model = RTNeural::json_parser::parseJson<float>(jsonStream, true);
+    return model;
+#endif
 }
 
 int Classifier::argmax(const float vec[], size_t vecSize) const
