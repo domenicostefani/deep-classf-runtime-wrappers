@@ -136,7 +136,6 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     float tsum = 0;
     for (size_t i = 0; i < numClasses; ++i)
         tsum += std::exp(outputVector[i]);
-    std::cout << "tsum = " << tsum << std::endl;
     for (size_t i = 0; i < numClasses; ++i)
         outputVector[i] = std::exp(outputVector[i]) / tsum;
 
