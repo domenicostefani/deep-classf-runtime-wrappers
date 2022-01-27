@@ -10,16 +10,19 @@
 #include <chrono>  //TODO: remove
 #include <cstdlib>
 
-#include "../classifier-lib.hpp"
+#include "../tflitewrapper.h"
 
-const std::size_t IN_SIZE = 190,
+const std::size_t IN_SIZE = 180,
                   OUT_SIZE = 8;
 
 int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        fprintf(stderr, "USAGE:\ninference_x86_64 <tflite model path> \n");
+        const char* scriptn_cstr = argv[0];
+        std::string scriptn(scriptn_cstr);
+        std::string errmessage = "USAGE:\n"+scriptn+" <model path> \n";
+        fprintf(stderr, errmessage.c_str());
         return 1;
     }
     const char* filename_cstr = argv[1];
@@ -47,6 +50,11 @@ int main(int argc, char* argv[])
         std::cout << "(or " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() << "ms)" << std::endl;
     }
     deleteClassifier(tc);
+
+    std::cout << std::endl << std::endl;
+    std::cout << "#----------------------------------------------------#" << std::endl;
+    std::cout << "# Test completed successfully                        #" << std::endl;
+    std::cout << "#----------------------------------------------------#" << std::endl << std::endl;
 
     return 0;
 }

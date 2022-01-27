@@ -1,30 +1,30 @@
 cmake_minimum_required(VERSION 3.16)
 project(TestTFliteWrapper C CXX)
 
-set(TENSORFLOW_SOURCE_DIR "" CACHE PATH
-  "Directory that contains the TensorFlow project"
-)
+include(FetchContent)
 
-if(NOT TENSORFLOW_SOURCE_DIR)
-  get_filename_component(TENSORFLOW_SOURCE_DIR
-    "${CMAKE_CURRENT_LIST_DIR}/tensorflow-src"
-    ABSOLUTE
-  )
-endif()
+FetchContent_Declare(
+  tensorflow
+  GIT_REPOSITORY https://github.com/tensorflow/tensorflow.git
+  GIT_TAG        c256c071bb26e1e13b4666d1b3e229e110bc914a # v2.7.0
+)
+FetchContent_MakeAvailable(tensorflow)
+
 
 add_subdirectory(
-  "${TENSORFLOW_SOURCE_DIR}/tensorflow/lite"
+  "${tensorflow_SOURCE_DIR}/tensorflow/lite"
   "${CMAKE_CURRENT_BINARY_DIR}/tensorflow-lite"
   EXCLUDE_FROM_ALL
 )
 
-# message(WARNING "TENSORFLOW_SOURCE_DIR: ${TENSORFLOW_SOURCE_DIR}")
-# message(WARNING "subdir1: ${TENSORFLOW_SOURCE_DIR}/tensorflow/lite")
-# message(SEND_ERROR "subdir2: ${CMAKE_CURRENT_BINARY_DIR}/tensorflow-lite")
+# Uncomment for debug purposes
+# message(WARNING "tensorflow_SOURCE_DIR: ${tensorflow_SOURCE_DIR}")
+# message(WARNING "subdir1: ${tensorflow_SOURCE_DIR}/tensorflow/lite")
+# message(WARNING "subdir2: ${CMAKE_CURRENT_BINARY_DIR}/tensorflow-lite")
 
 set(CMAKE_CXX_STANDARD 11)
 add_library(tflitewrapper
-  src/classifier-lib.cpp
+  src/tflitewrapper.cpp
 )
 target_link_libraries(tflitewrapper
   tensorflow-lite
@@ -33,8 +33,8 @@ target_link_libraries(tflitewrapper
 
 
 add_executable(TestTFliteWrapper
-  src/test/main.cpp
+    src/test/main.cpp
 )
 target_link_libraries(TestTFliteWrapper
-    LibraryFile
+    tflitewrapper
 )
