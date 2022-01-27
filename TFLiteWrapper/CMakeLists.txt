@@ -32,9 +32,16 @@ target_link_libraries(tflitewrapper
 
 
 
-add_executable(TestTFliteWrapper
-    src/test/main.cpp
+add_executable(tflite_test_base
+    src/test/test1.cpp
 )
-target_link_libraries(TestTFliteWrapper
+target_link_libraries(tflite_test_base
+    tflitewrapper
+)
+
+add_executable(tflite_test_bulk
+    src/test/test2.cpp
+)
+target_link_libraries(tflite_test_bulk
     tflitewrapper
 )

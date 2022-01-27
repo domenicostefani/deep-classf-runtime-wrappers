@@ -10,7 +10,7 @@
 #include <chrono> //TODO: remove
 #include <cstdlib>
 
-#include "liteclassifier.h"
+#include "../tflitewrapper.h"
 
 const std::size_t IN_SIZE = 180,
                   OUT_SIZE = 8;
@@ -267,6 +267,13 @@ int main(int argc, char *argv[])
         std::cout << "]\n";
 
     }
+
+
+    std::cout << std::endl << std::endl;
+    std::cout << "#----------------------------------------------------#" << std::endl;
+    std::cout << "# Test completed successfully                        #" << std::endl;
+    std::cout << "#----------------------------------------------------#" << std::endl << std::endl;
+
 
     return 0;
 }
