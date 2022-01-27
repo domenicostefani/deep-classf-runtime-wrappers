@@ -1,3 +1,5 @@
 tensorflow-src
 .vscode
 .o
+build
+bin
