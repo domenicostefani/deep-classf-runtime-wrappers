@@ -1,6 +1,6 @@
 /*
 ==============================================================================*/
-#include "RTNeural-classifier-lib.h"
+#include "rtneuralwrapper.h"
 
 #include <cstdio>
 #include <iostream>
@@ -69,7 +69,11 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     if (verbose)
     {
         std::cout << std::setfill('-') << std::setw(40) << "" << std::endl;
-        std::cout << "Parsing model..." << std::endl;
+       #ifdef USE_COMPILE_TIME_API
+        std::cout << "Parsing model (compile-time defined model)..." << std::endl;
+       #else
+        std::cout << "Parsing model (dynamic model loading)..." << std::endl;
+       #endif
     }
     this->model = loadModel(filename, verbose);
     if (verbose)
@@ -173,6 +177,12 @@ int Classifier::argmax(const float vec[], size_t vecSize) const
 /***** Handle functions *****/
 ClassifierPtr createClassifier(const std::string &filename, bool verbose)
 {
+    #ifdef USE_COMPILE_TIME_API
+        std::cout << "I am compile time optimized";
+    #else
+        std::cout << "I am compile time optimized";
+    #endif
+
     return new Classifier(filename, verbose);
 }
 
