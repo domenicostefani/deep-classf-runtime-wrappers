@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
-project(TestTFliteWrapper C CXX)
+project(TFliteWrapper C CXX)
+set(WRAP_LIB_NAME tflitewrapper)
 
 include(FetchContent)
-
 FetchContent_Declare(
   tensorflow
   GIT_REPOSITORY https://github.com/tensorflow/tensorflow.git
@@ -10,6 +10,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(tensorflow)
 
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_subdirectory(
   "${tensorflow_SOURCE_DIR}/tensorflow/lite"
@@ -23,10 +26,10 @@ add_subdirectory(
 # message(WARNING "subdir2: ${CMAKE_CURRENT_BINARY_DIR}/tensorflow-lite")
 
 set(CMAKE_CXX_STANDARD 11)
-add_library(tflitewrapper
+add_library(${WRAP_LIB_NAME}
   src/tflitewrapper.cpp
 )
-target_link_libraries(tflitewrapper
+target_link_libraries(${WRAP_LIB_NAME}
   tensorflow-lite
 )
 
