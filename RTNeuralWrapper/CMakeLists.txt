@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(rtneuralwrapper VERSION 0.1.0)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
     message(STATUS "Defaulting to RELEASE build type")
