@@ -10,7 +10,7 @@
 #include <chrono>
 #include <cstdlib>
 
-#include "onnx-classifier-lib.h"
+#include "../onnxwrapper.h"
 
 const std::size_t IN_SIZE = 180,
                   OUT_SIZE = 8;
