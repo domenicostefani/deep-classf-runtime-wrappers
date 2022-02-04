@@ -4,6 +4,7 @@ set(LIB_NAME torchclassifier)
 
 project(${LIB_NAME} VERSION 0.1.0)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
