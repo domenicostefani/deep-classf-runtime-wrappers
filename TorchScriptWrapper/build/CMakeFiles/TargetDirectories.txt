@@ -1,4 +1,0 @@
-/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/edit_cache.dir
-/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/test-torch-lib.dir
-/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/rebuild_cache.dir
-/home/cimil-01/Desktop/StudentProjects/torchscript-interpreter-wrapper/build/CMakeFiles/torchclassifier.dir

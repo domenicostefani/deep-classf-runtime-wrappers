@@ -10,7 +10,7 @@
 #include <chrono>
 #include <cstdlib>
 
-#include "torch-classifier-lib.h"
+#include "../torchscriptwrapper.h"
 
 const std::size_t IN_SIZE = 180,
                   OUT_SIZE = 8;

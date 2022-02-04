@@ -1,6 +1,6 @@
 /*
 ==============================================================================*/
-#include "torch-classifier-lib.h"
+#include "torchscriptwrapper.h"
 
 #include <cstdio>
 #include <iostream>

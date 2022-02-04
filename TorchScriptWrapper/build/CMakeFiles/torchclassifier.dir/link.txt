@@ -1,2 +1,0 @@
-/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-elk-linux/aarch64-elk-linux-ar qc libtorchclassifier.a  CMakeFiles/torchclassifier.dir/src/torch-classifier-lib.cpp.o
-/opt/elk/1.0/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-elk-linux/aarch64-elk-linux-ranlib libtorchclassifier.a
