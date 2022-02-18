@@ -180,7 +180,7 @@ ClassifierPtr createClassifier(const std::string &filename, bool verbose)
     #ifdef USE_COMPILE_TIME_API
         std::cout << "I am compile time optimized";
     #else
-        std::cout << "I am compile time optimized";
+        std::cout << "I am run time optimized";
     #endif
 
     return new Classifier(filename, verbose);
