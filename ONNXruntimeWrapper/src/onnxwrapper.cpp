@@ -203,7 +203,7 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
 
 Ort::Session *Classifier::loadModel(const std::string &filename)
 {
-    Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "onnx-test");
+    static Ort::Env env;//()ORT_LOGGING_LEVEL_WARNING, "onnx-test");
     Ort::SessionOptions session_options;
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
     session_options.SetOptimizedModelFilePath("optimized_model.onnx.tmp");
