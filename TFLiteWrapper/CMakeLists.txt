@@ -34,19 +34,20 @@ add_library(${WRAP_LIB_NAME}
 target_link_libraries(${WRAP_LIB_NAME}
   tensorflow-lite
 )
-
+# add_custom_target(combined ALL
+#    COMMAND ${CMAKE_AR} rc libcombined.a $<TARGET_FILE:${WRAP_LIB_NAME}> $<TARGET_FILE:tensorflow-lite>)
 
 
 add_executable(tflite_test_base
     src/test/test1.cpp
 )
 target_link_libraries(tflite_test_base
-    tflitewrapper
+    ${WRAP_LIB_NAME}
 )
 
 add_executable(tflite_test_bulk
     src/test/test2.cpp
 )
 target_link_libraries(tflite_test_bulk
-    tflitewrapper
+    ${WRAP_LIB_NAME}
 )

@@ -7,7 +7,7 @@
 #include <utility>
 #include <limits> // std::numeric_limits>
 #include <array>
-#include <chrono> //TODO: remove
+#include <chrono>
 #include <cstdlib>
 
 #include "../tflitewrapper.h"
@@ -233,12 +233,21 @@ int main(int argc, char *argv[])
     std::vector<int> y_pred = std::vector<int>();
     for (int i = 0; i < featureVectors.size(); ++i)
     {
+        auto start = std::chrono::high_resolution_clock::now();
+
         int result = classify(tc, featureVectors[i], my_output_vec);
 
-        // printf("Predicted class %d confidence: %f\n", result, my_output_vec[result]);
+        auto stop = std::chrono::high_resolution_clock::now();
+
+        
+        printf("(std::chrono) Classification took %ld us or %ld ms",\
+                std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count(),\
+                std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count());
         y_pred.push_back(result);
     }
     deleteClassifier(tc);
+
+
 
 
 
