@@ -16,7 +16,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 if(USE_COMPILE_TIME_API)
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_COMPILE_TIME_API")
     set(NNLOADTYPE "ctime")
-    message(STATUS "Compiling wrapper for dynamic run-time model loading")
+    message(STATUS "Compiling wrapper for optimized compile-time model loading")
 else()
     set(NNLOADTYPE "rtime")
     message(STATUS "Compiling wrapper for dynamic run-time model loading")
@@ -46,3 +46,13 @@ ADD_EXECUTABLE( ${APP_EXE}
 TARGET_LINK_LIBRARIES( ${APP_EXE}
                        ${LIB_NAME} )
 
+
+
+# CMake instructions to test using the lib (Dynamic run-time NN loading)
+SET( APP_EXE testmeasure-rtneural_${NNLOADTYPE} )
+
+ADD_EXECUTABLE( ${APP_EXE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testmeasure.cpp ) 
+
+TARGET_LINK_LIBRARIES( ${APP_EXE}
+                       ${LIB_NAME} )
