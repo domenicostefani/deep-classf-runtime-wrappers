@@ -31,9 +31,11 @@ private:
     int argmax(const float vec[], size_t vecSize) const;
 
     /** Check the input size requested by a torchscript model */
-    int requestedInputSize(const torch::jit::Module *model) const;
+    size_t requestedInputSize(const torch::jit::Module *model) const;
     /** Check the output size requested by the model */
-    int requestedOutputSize(const torch::jit::Module *model) const;
+    size_t requestedOutputSize(const torch::jit::Module *model) const;
+
+    size_t storedRequestedInputSize = 0, storedRequestedOutputSize = 0;
 
     //--------------------------------------------------------------------------
 
@@ -49,21 +51,30 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     // Load model
     this->model = loadModel(filename);
 
+    if(verbose)
+        std::cout << "ONNXWRAPPER: Preparing and optimizing model" << std::endl << std::flush;
+
     // Prepare model for inference and run optimizations
     prepareOptimize(this->model);
 
+    storedRequestedInputSize = requestedInputSize(this->model);
+    storedRequestedOutputSize = requestedOutputSize(this->model);
+
+    if(verbose) {
+        std::cout << "ONNXWRAPPER: InputSize: "  << storedRequestedInputSize  << std::endl << std::flush;
+        std::cout << "ONNXWRAPPER: OutputSize: " << storedRequestedOutputSize << std::endl << std::flush;
+    }
+
     // Initialize input Tensor
-    this->input_.push_back(at::zeros({1, 180}));
+    this->input_.push_back(at::zeros({1, (long int)storedRequestedInputSize}));
     this->input_data_ = this->input_[0].toTensor().data_ptr<float>();
     // Initialize output Tensor
-    this->output_ = at::zeros({8});
+    this->output_ = at::zeros({(long int)storedRequestedOutputSize});
 
     // Prime the classifier
-    std::vector<float> pIv(requestedInputSize(this->model));
-    std::vector<float> pOv(requestedOutputSize(this->model));
-
-    for(int j=0; j < 5; ++j)
-        this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
+    std::vector<float> pIv(storedRequestedInputSize);
+    std::vector<float> pOv(storedRequestedOutputSize);
+    this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
 
     /*
      * The priming operation should ensure that every allocation performed
@@ -76,9 +87,8 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     // Guard to enable inference mode in current scope
     c10::InferenceMode guard;
 
-    size_t requestedInSize = requestedInputSize(this->model);
-    if (numFeatures != requestedInSize)
-        throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize) + " (Found " + std::to_string(numFeatures) + " instead)");
+    if (numFeatures != storedRequestedInputSize)
+        throw std::logic_error("Error, input vector has to have size: " + std::to_string(storedRequestedInputSize) + " (Found " + std::to_string(numFeatures) + " instead)");
 
     // Fill `input`.
     for (size_t i = 0; i < numFeatures; ++i)
@@ -87,9 +97,8 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     // Run inference
     this->output_ = this->model->forward(this->input_).toTensor();
 
-    size_t requestedOutSize = requestedOutputSize(this->model);
-    if (numClasses != requestedOutSize)
-        throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + " (Found " + std::to_string(numClasses) + " instead)");
+    if (numClasses != storedRequestedOutputSize)
+        throw std::logic_error("Error, output vector has to have size: " + std::to_string(storedRequestedOutputSize) + " (Found " + std::to_string(numClasses) + " instead)");
 
     // Copy output
     for (size_t i = 0; i < numClasses; ++i)
@@ -145,7 +154,7 @@ int Classifier::argmax(const float vec[], size_t vecSize) const
     return argmax;
 }
 
-int Classifier::requestedInputSize(const torch::jit::Module *model) const
+size_t Classifier::requestedInputSize(const torch::jit::Module *model) const
 {
     // get input dimension from the input tensor metadata
     // assuming one input only
@@ -153,7 +162,7 @@ int Classifier::requestedInputSize(const torch::jit::Module *model) const
     return wanted_size;
 }
 
-int Classifier::requestedOutputSize(const torch::jit::Module *model) const // TODO: Check if optimizable
+size_t Classifier::requestedOutputSize(const torch::jit::Module *model) const // TODO: Check if optimizable
 {
     auto iter = model->parameters().begin();
     for (size_t i = 0; i < model->parameters().size() - 1; i++)
