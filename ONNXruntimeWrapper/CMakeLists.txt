@@ -16,12 +16,12 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(libs/onnxruntime/include)
-# include_directories(libs/onnxruntime/include/onnxruntime/core/session/)
+include_directories(libs/onnxruntime/include/onnxruntime/core/session/)
 
 ADD_LIBRARY( ${LIB_NAME} STATIC
              ${CMAKE_CURRENT_SOURCE_DIR}/src/onnxwrapper.cpp )
 
-target_link_libraries(${LIB_NAME} ${CMAKE_SOURCE_DIR}/libs/onnxruntime/build/Linux_aarch64/Release/libonnxruntime.so)
+target_link_libraries(${LIB_NAME} ${CMAKE_SOURCE_DIR}/libs/onnxruntime1.7.0_aarch64build/libonnxruntime.so.1.7.0)
 
 
 # CMake instructions to test using the static lib
@@ -33,3 +33,14 @@ ADD_EXECUTABLE( ${APP_EXE}
 
 TARGET_LINK_LIBRARIES( ${APP_EXE}
                         ${LIB_NAME} )
+
+
+
+SET( TESTMEASURE_EXE testmeasure-onnx )
+
+ADD_EXECUTABLE( ${TESTMEASURE_EXE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testmeasure.cpp ) 
+
+TARGET_LINK_LIBRARIES( ${TESTMEASURE_EXE}
+                        ${LIB_NAME} )
+                        
