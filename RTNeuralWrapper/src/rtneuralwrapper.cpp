@@ -17,6 +17,7 @@
 #include "RTNeural.h"
 
 #ifdef USE_COMPILE_TIME_API
+// --- Model B ---
 typedef RTNeural::ModelT<float, 173, 8,
         RTNeural::DenseT<float, 173, 350>,
         RTNeural::ReLuActivationT<float, 350>,
@@ -31,6 +32,13 @@ typedef RTNeural::ModelT<float, 173, 8,
         RTNeural::DenseT<float, 350, 350>,
         RTNeural::ReLuActivationT<float, 350>,
         RTNeural::DenseT<float, 350, 8>> model_t;
+
+// --- Model C ---
+// typedef RTNeural::ModelT<float, 173, 8,
+//         RTNeural::DenseT<float, 173, 350>,
+//         RTNeural::ReLuActivationT<float, 350>,
+//         RTNeural::DenseT<float, 350, 8>> model_t;
+
 typedef model_t * model_ptr;
 #else
 typedef RTNeural::Model<float> model_t;
@@ -70,7 +78,7 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     {
         std::cout << std::setfill('-') << std::setw(40) << "" << std::endl;
        #ifdef USE_COMPILE_TIME_API
-        std::cout << "Parsing model (compile-time defined model)..." << std::endl;
+        std::cout << "Parsing model (compile-time defined model, Model B)..." << std::endl;
        #else
         std::cout << "Parsing model (dynamic model loading)..." << std::endl;
        #endif
@@ -178,9 +186,9 @@ int Classifier::argmax(const float vec[], size_t vecSize) const
 ClassifierPtr createClassifier(const std::string &filename, bool verbose)
 {
     #ifdef USE_COMPILE_TIME_API
-        std::cout << "I am compile time optimized";
+        std::cout << "I am compile time optimized" << std::endl << std::flush;
     #else
-        std::cout << "I am run time optimized";
+        std::cout << "I am run time optimized" << std::endl << std::flush;
     #endif
 
     return new Classifier(filename, verbose);
