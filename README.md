@@ -1,4 +1,4 @@
-# Deep Learning Runtime wrappers for classification on ElkOS
+# Deep Learning Runtime wrappers for classification
 
 Classification wrappers that expose the same API for the following Deep Learning Embedded Runtimes:
 - TensorFlow Lite
