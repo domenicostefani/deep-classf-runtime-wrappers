@@ -5,7 +5,7 @@
 #include <cassert>
 #include <algorithm>
 #include <utility>
-#include <limits> // std::numeric_limits>
+#include <limits>
 #include <array>
 #include <chrono>
 #include <cstdlib>
@@ -172,7 +172,7 @@ void printVec(std::vector<std::array<float,IN_SIZE>> &in, size_t row)
 
 void printVec(std::vector<std::array<float,IN_SIZE>> &in)
 {
-    for (int row = 0; row < in.size(); ++row)
+    for (size_t row = 0; row < in.size(); ++row)
         printVec(in, row);
 }
 
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
         const char *execpath_cstr = argv[0];
         std::string execpath(execpath_cstr);
         std::string errormsg = "USAGE:\n"+execpath+" <tflite model path> <features_file> <true_labels_file>\n";
-        fprintf(stderr, errormsg.c_str());
+        fprintf(stderr, "%s", errormsg.c_str());
         return 1;
     }
     const char *modelpath_cstr = argv[1];
@@ -227,11 +227,11 @@ int main(int argc, char *argv[])
     ClassifierPtr tc = createClassifier(modelpath);
 
     std::array<float, OUT_SIZE> my_output_vec;
-    for (int i = 0; i < OUT_SIZE; ++i)
+    for (size_t i = 0; i < OUT_SIZE; ++i)
         my_output_vec[i] = 0.0f;
 
     std::vector<int> y_pred = std::vector<int>();
-    for (int i = 0; i < featureVectors.size(); ++i)
+    for (size_t i = 0; i < featureVectors.size(); ++i)
     {
         auto start = std::chrono::high_resolution_clock::now();
 
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
     auto cmatrix = std::array<std::array<int,OUT_SIZE>,OUT_SIZE>();
 
 
-    for (int idx=0;idx<y_true.size();++idx) {
+    for (size_t idx=0;idx<y_true.size();++idx) {
         int curTrue = y_true[idx], curPred = y_pred[idx];
 
         cmatrix[curTrue][curPred] += 1;
