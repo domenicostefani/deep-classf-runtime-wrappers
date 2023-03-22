@@ -31,12 +31,15 @@ public:
     /** Constructor */
     Classifier(const std::string &filename, bool verbose = false);
     /** Internal classification function, called by wrappers */
-    int classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses, bool verbose = true);
+    int classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses, bool verbose = false);
+    int classify_internal2d(float **featureMatrix, size_t rows, size_t cols, float outputVector[], size_t numClasses, bool verbose = false);
 
     // int requestedInputSize(const std::unique_ptr<Interpreter> &interpreter) const;
     // int requestedOutputSize(const std::unique_ptr<Interpreter> &interpreter) const;
 
     int requestedInputSize() const;
+    int requested2drows() const;
+    int requested2dcols() const;
     int requestedOutputSize() const;
 private:
     /** Step 1, TFLITE loading the .tflite model */
@@ -80,7 +83,10 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     if (interpreter == nullptr)
         throw std::runtime_error("Failed to build interpreter. Return value is NULL.");
 
-    tflite::PrintInterpreterState(interpreter.get()); 
+    if (verbose) {
+        std::cout << "Interpreter built successfully." << std::endl;
+        tflite::PrintInterpreterState(interpreter.get()); 
+    }
 
 
     // Get pointer to the input Tensor
@@ -113,7 +119,7 @@ Classifier::Classifier(const std::string &filename, bool verbose)
         throw std::runtime_error("Error, the model has more than one output tensor.  This is not supported.");
     else if (verbose) {
         std::cout << "The model has " << interpreter->outputs().size() << " output tensors." << std::endl;
-        for (int i=0; i<interpreter->outputs().size(); ++i) {
+        for (size_t i=0; i<interpreter->outputs().size(); ++i) {
             TfLiteIntArray* output_dims = interpreter->tensor(interpreter->outputs()[i])->dims;
             auto output_size = output_dims->data[output_dims->size - 1];
             auto output_type = TfLiteTypeGetName(interpreter->tensor(interpreter->outputs()[i])->type);
@@ -125,18 +131,29 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     if (outputTensorPtr == nullptr)
         throw std::runtime_error("Failed to get pointer to the output tensor.  interpreter->typed_output_tensor<float>(0) returns NULL.");
 
+    bool prime2d = (interpreter->tensor(interpreter->inputs()[0])->dims->size == 4);
 
     // Prime the classifier
     if (verbose)
         std::cout << "Done.\nPriming the classifier (Calling inference once)..." << std::endl;
     std::vector<float> pIv;
-    pIv.resize(this->requestedInputSize());
+    if (prime2d) {
+        if (verbose) {
+            std::cout << "Input size: [" << this->requested2drows() << " x " << this->requested2dcols() << "] | Output size: " << this->requestedOutputSize() << std::endl;
+        }
+        pIv.resize(this->requested2drows()*this->requested2dcols());
+    }
+    else {
+        if (verbose) {
+            std::cout << "Input size: " << this->requestedInputSize()  << " | Output size: " << this->requestedOutputSize() << std::endl;
+        }
+        pIv.resize(this->requestedInputSize());
+    }
     std::vector<float> pOv;
     pOv.resize(this->requestedOutputSize());
-    if (verbose) {
-        std::cout << "Input size: " << this->requestedInputSize()  << " | Output size: " << this->requestedOutputSize() << std::endl;
-    }
     this->classify_internal(&pIv[0],pIv.size(),&pOv[0],pOv.size(), verbose);
+    if (verbose)
+        std::cout << "Done.\nClassifier primed." << std::endl;
 
     /*
      * The priming operation should ensure that every allocation performed
@@ -146,16 +163,20 @@ Classifier::Classifier(const std::string &filename, bool verbose)
 
 int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses, bool verbose)
 {
-    size_t requestedInSize = requestedInputSize();
-    if (numFeatures != requestedInSize)
-        throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize) + " (Found " +std::to_string(numFeatures)+ " instead)");
     if (verbose) {
         std::cout << "classify | Input size: " << numFeatures  << " | Output size: " << numClasses << std::endl;
         std::cout << "classify | Filling input tensor..." << std::endl << std::flush;
     }
     // Fill `input`.
-    for(size_t i=0; i<numFeatures; ++i)
+    for(size_t i=0; i<numFeatures; ++i) {
         this->inputTensorPtr[i] = featureVector[i];
+        // if (verbose) {
+        //     std::cout << "classify | inputTensorPtr[" << i << "] = " << this->inputTensorPtr[i] << std::endl << std::flush;
+        // }
+    }
+     
+    // Alternative with memcpy
+    // memcpy(this->inputTensorPtr, featureVector, numFeatures*sizeof(float));
 
     if (verbose)
         std::cout << "classify | Done.\nclassify | Running inference..." << std::endl << std::flush;
@@ -170,12 +191,13 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     if(numClasses != requestedOutSize)
         throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + " (Found " +std::to_string(numClasses)+ " instead)");        
 
-    if (verbose)
+    if (verbose) {
         std::cout << "classify | Done (size is OK).\nclassify | Copying to array..." << std::endl << std::flush;
 
-    for (size_t i=0; i<numClasses; ++i)
-        std::cout << outputTensorPtr[i] << std::endl << std::flush;
-        // outputVector[i] = outputTensorPtr[i];
+        for (size_t i=0; i<numClasses; ++i)
+            std::cout << "classify | outputTensorPtr[" << i << "] :" << outputTensorPtr[i] << std::endl << std::flush;
+            // outputVector[i] = outputTensorPtr[i];
+    }
 
     if (verbose)
         std::cout << "classify | Done.\nclassify | Applying softmax..." << std::endl << std::flush;
@@ -187,7 +209,13 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     for (size_t i=0; i<numClasses; ++i)
         outputVector[i] = exp(outputVector[i])/tsum;
 
-    return argmax(outputVector, numClasses);
+    int res = argmax(outputVector, numClasses);
+
+    if (verbose)
+        std::cout << "classify | Done." << std::endl << std::flush;
+
+
+    return res;
 }
 
 /** STEP 1 */
@@ -237,6 +265,19 @@ int Classifier::requestedInputSize() const
     return wanted_size;
 }
 
+int Classifier::requested2drows() const
+{
+    int input = this->interpreter->inputs()[0];
+    return this->interpreter->tensor(input)->dims->data[1];
+}
+
+int Classifier::requested2dcols() const
+{
+    int input = this->interpreter->inputs()[0];
+    return this->interpreter->tensor(input)->dims->data[2];
+}
+
+
 int Classifier::requestedOutputSize() const
 {
     int output_index = this->interpreter->outputs()[0];
@@ -250,7 +291,8 @@ int Classifier::requestedOutputSize() const
 /***** Handle functions *****/
 ClassifierPtr createClassifier (const std::string &filename, bool verbose)
 {
-    return new Classifier(filename,verbose);
+    ClassifierPtr res = new Classifier(filename, verbose);
+    return res;
 }
 
 void deleteClassifier(ClassifierPtr cls)
@@ -261,30 +303,63 @@ void deleteClassifier(ClassifierPtr cls)
 
 int classify(ClassifierPtr cls, const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses, bool verbose)
 {
+    size_t requestedInSize = cls->requestedInputSize();
+    if (numFeatures != requestedInSize)
+        throw std::logic_error("Error, input vector has to have size: " + std::to_string(requestedInSize) + " (Found " +std::to_string(numFeatures)+ " instead)");
+    
     return cls->classify_internal(featureVector, numFeatures, outputVector, numClasses, verbose);
 }
 
-// int classify(ClassifierPtr cls, std::vector<float>& featureVector, std::vector<float>& outputVector, bool verbose)
+
+int classifyFlat2D(ClassifierPtr cls, const float flatFeatureMatrix[], size_t nRows, size_t nCols, float outputVector[], size_t numClasses, bool verbose)
+{
+    size_t reqRows, reqCols;
+    reqRows = cls->requested2drows();
+    reqCols = cls->requested2dcols();
+    if (nRows != reqRows || nCols != reqCols)
+        throw std::logic_error("Error, input vector has to have size: " + std::to_string(reqRows) + "x" + std::to_string(reqCols) + " (Found " +std::to_string(nRows)+ "x" + std::to_string(nCols) + " instead)");
+    return cls->classify_internal(flatFeatureMatrix, nRows*nCols, outputVector, numClasses, verbose);
+}
+
 int classify(ClassifierPtr cls, std::vector<float>& featureVector, std::vector<float>& outputVector)
 {
-    if (featureVector.size() != getModelInputSize(cls)) {
-        std::cerr << "Input vector size does not match model input size (" << featureVector.size() << " != " << getModelInputSize(cls) << ")" << std::endl;
-        throw std::runtime_error(("Input vector size does not match model input size (" + std::to_string(featureVector.size()) + " != " + std::to_string(getModelInputSize(cls)) + ")").c_str());
-        // return -1;
+    if (featureVector.size() != getModelInputSize1d(cls)) {
+        std::cerr << "Input vector size does not match model input size (" << featureVector.size() << " != " << getModelInputSize1d(cls) << ")" << std::endl;
+        throw std::runtime_error(("Input vector size does not match model input size (" + std::to_string(featureVector.size()) + " != " + std::to_string(getModelInputSize1d(cls)) + ")").c_str());
     }
     if (outputVector.size() != getModelOutputSize(cls)) {
         std::cerr << "Output vector size does not match model output size (" << outputVector.size() << " != " << getModelOutputSize(cls) << ")" << std::endl;
         throw std::runtime_error(("Output vector size does not match model output size (" + std::to_string(outputVector.size()) + " != " + std::to_string(getModelOutputSize(cls)) + ")").c_str());
-        // return -1;
+    }
+    return classify(cls, featureVector.data(), (size_t)featureVector.size(), outputVector.data(), (size_t)outputVector.size());
+}
+
+int classifyFlat2D(ClassifierPtr cls, std::vector<float>& flatInputMatrix, size_t nRows, size_t nCols, std::vector<float>& outputVector) {
+    if (flatInputMatrix.size() != nRows*nCols) {
+        std::cerr << "Input vector size does not match the nRows and nCols values provided (" << flatInputMatrix.size() << " != " << nRows << "*" << nCols << ")" << std::endl;
+        throw std::runtime_error(("Input vector size does not match the nRows and nCols values provided (" + std::to_string(flatInputMatrix.size()) + " != " + std::to_string(nRows) + "*" + std::to_string(nCols) + ")").c_str());
+    }
+    if ((int)nRows != cls->requested2drows())
+        throw std::runtime_error(("Input vector size does not match model input size (" + std::to_string(nRows) + " != " + std::to_string(cls->requested2drows()) + ")").c_str());
+    if ((int)nCols != cls->requested2dcols())
+        throw std::runtime_error(("Input vector size does not match model input size (" + std::to_string(nCols) + " != " + std::to_string(cls->requested2dcols()) + ")").c_str());
+    if (outputVector.size() != getModelOutputSize(cls)) {
+        std::cerr << "Output vector size does not match model output size (" << outputVector.size() << " != " << getModelOutputSize(cls) << ")" << std::endl;
+        throw std::runtime_error(("Output vector size does not match model output size (" + std::to_string(outputVector.size()) + " != " + std::to_string(getModelOutputSize(cls)) + ")").c_str());
     }
 
-    return classify(cls, featureVector.data(), (size_t)featureVector.size(), outputVector.data(), (size_t)outputVector.size());
+    return classifyFlat2D(cls, flatInputMatrix.data(), nRows, nCols, outputVector.data(), outputVector.size());
 }
 
 
 
-size_t getModelInputSize(ClassifierPtr cls) {
+size_t getModelInputSize1d(ClassifierPtr cls) {
     return (size_t)(cls->requestedInputSize());
+}
+
+void getModelInputSize2d(ClassifierPtr cls, size_t& rows, size_t& columns) {
+    rows = (size_t)(cls->requested2drows());
+    columns = (size_t)(cls->requested2dcols());
 }
 
 size_t getModelOutputSize(ClassifierPtr cls) {

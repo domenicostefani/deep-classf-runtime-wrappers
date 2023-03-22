@@ -59,6 +59,13 @@ target_link_libraries(tflite_test_base
     ${WRAP_LIB_NAME}
 )
 
+add_executable(tflite_test_2d
+    src/test/test_2d.cpp
+)
+target_link_libraries(tflite_test_2d
+    ${WRAP_LIB_NAME}
+)
+
 add_executable(tflite_test_bulk
     src/test/test_bulk.cpp
 )

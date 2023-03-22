@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
     ClassifierPtr tc = createClassifier(filename, VERBOSE_CREATE);
 
-    size_t in_size = getModelInputSize(tc);
+    size_t in_size = getModelInputSize1d(tc);
     size_t out_size = getModelOutputSize(tc);
 
     std::cout << "Model input size: " << in_size << std::endl;
