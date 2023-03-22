@@ -1,10 +1,13 @@
 # Deep Learning Runtime wrappers for Embedded Real-time Audio Classification
 
 Classification wrappers that expose the same API for the following Deep Learning Embedded Runtimes:
-- TensorFlow Lite
+- TensorFlow Lite 2.7.0
 - Torchscript/Pytorch C++
 - ONNX Runtime
 - RTNeural
+
+**We also provide an improved wrapper for TFlite 2.5.3 with support for 2d input**.
+However, that version of the API is different and **not** compatible with the others
 
 Each folder contains scripts and library binaries to compile libraries for the [Elk Audio OS](https://github.com/elk-audio)
 
