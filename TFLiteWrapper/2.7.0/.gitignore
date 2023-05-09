@@ -1,5 +1,5 @@
 tensorflow-src
 .vscode
 .o
-build
+build/
 bin

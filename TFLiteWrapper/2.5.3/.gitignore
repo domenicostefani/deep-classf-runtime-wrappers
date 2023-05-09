@@ -1,6 +1,7 @@
 tensorflow-src
 .vscode
 .o
-build
-build-elk
+build/
+build-elk/
+build-*/
 bin
