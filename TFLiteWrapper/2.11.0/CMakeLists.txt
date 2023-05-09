@@ -3,7 +3,7 @@ project(TFliteWrapper C CXX)
 set(WRAP_LIB_NAME tflitewrapper)
 
 include(FetchContent)
-
+Set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
     tensorflow
     GIT_REPOSITORY https://github.com/tensorflow/tensorflow.git
