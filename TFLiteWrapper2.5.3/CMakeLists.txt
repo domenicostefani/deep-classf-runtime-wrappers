@@ -24,7 +24,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(tensorflow)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON) # It doesnt seem like its working TODO: fix
+
+set(TFLITE_ENABLE_XNNPACK OFF)
 
 set(CMAKE_CXX_FLAGS "-Wl,--no-as-needed -ldl -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -48,6 +50,9 @@ add_library(${WRAP_LIB_NAME}
 target_link_libraries(${WRAP_LIB_NAME}
   tensorflow-lite
 )
+# tflite_with_xnnpack=true 
+target_compile_definitions(${WRAP_LIB_NAME} PRIVATE tflite_with_xnnpack=false)
+
 # add_custom_target(combined ALL
 #    COMMAND ${CMAKE_AR} rc libcombined.a $<TARGET_FILE:${WRAP_LIB_NAME}> $<TARGET_FILE:tensorflow-lite>)
 

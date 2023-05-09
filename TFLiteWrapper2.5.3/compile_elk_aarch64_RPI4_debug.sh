@@ -3,8 +3,8 @@
 unset LD_LIBRARY_PATH
 source /opt/elk/1.0/environment-setup-aarch64-elk-linux
 
-mkdir -p build-elk
-cd build-elk
+mkdir -p build-elk-debug
+cd build-elk-debug
 cmake .. -DTFLITE_ENABLE_XNNPACK=OFF
 
 export CXXFLAGS=CXXFLAGS:"-O3 -pipe -ffast-math -feliminate-unused-debug-types -funroll-loops -Wfatal-errors"

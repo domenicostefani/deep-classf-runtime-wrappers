@@ -132,7 +132,14 @@ Classifier::Classifier(const std::string &filename, bool verbose)
         throw std::runtime_error("Failed to get pointer to the output tensor.  interpreter->typed_output_tensor<float>(0) returns NULL.");
 
     bool prime2d = (interpreter->tensor(interpreter->inputs()[0])->dims->size == 4);
-
+    if (verbose) {
+        std::cout << "prime2d: " << prime2d << std::endl;
+        std::cout << "interpreter->tensor(interpreter->inputs()[0])->dims->size: " << interpreter->tensor(interpreter->inputs()[0])->dims->size << std::endl;
+        if (prime2d)
+            std::cout << "The model is a 2D model." << std::endl;
+        else
+            std::cout << "The model is a 1D model." << std::endl;
+    }
     // Prime the classifier
     if (verbose)
         std::cout << "Done.\nPriming the classifier (Calling inference once)..." << std::endl;
@@ -196,8 +203,9 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
 
         for (size_t i=0; i<numClasses; ++i)
             std::cout << "classify | outputTensorPtr[" << i << "] :" << outputTensorPtr[i] << std::endl << std::flush;
-            // outputVector[i] = outputTensorPtr[i];
     }
+    for (size_t i=0; i<numClasses; ++i)
+        outputVector[i] = outputTensorPtr[i];
 
     if (verbose)
         std::cout << "classify | Done.\nclassify | Applying softmax..." << std::endl << std::flush;
@@ -213,6 +221,10 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
 
     if (verbose)
         std::cout << "classify | Done." << std::endl << std::flush;
+    if (verbose) {
+        for (size_t i=0; i<numClasses; ++i)
+            std::cout << "classify | outputVector[" << i << "] :" << outputVector[i] << std::endl << std::flush;
+    }
 
 
     return res;

@@ -55,6 +55,10 @@ int main(int argc, char* argv[])
         // int result = thisisatest();
         auto stop = std::chrono::high_resolution_clock::now();
 
+        // Print output vector
+        for(size_t i=0; i<out_size; ++i)
+            printf("Output vector %zu: %f", i, my_output_vec[i]);
+
         printf("Predicted class %d confidence: %f\n", result, my_output_vec[result]);
         std::cout << "It took " << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << "us" << std::endl;
         std::cout << "(or " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() << "ms)" << std::endl;
