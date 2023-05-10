@@ -1,7 +1,8 @@
 #!/bin/bash
 
 unset LD_LIBRARY_PATH
-source /opt/elk/1.0/environment-setup-aarch64-elk-linux
+# source /opt/elk/1.0/environment-setup-aarch64-elk-linux
+source /opt/elk/0.11.0/environment-setup-cortexa72-elk-linux  
 
 mkdir -p build-elk
 cd build-elk
