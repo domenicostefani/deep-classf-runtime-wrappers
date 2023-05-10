@@ -8,6 +8,7 @@ FetchContent_Declare(
     tensorflow
     GIT_REPOSITORY https://github.com/tensorflow/tensorflow.git
     GIT_TAG d5b57ca93e506df258271ea00fc29cf98383a374 # v2.11.0
+    GIT_PROGRESS TRUE
 )
 
 FetchContent_MakeAvailable(tensorflow)
