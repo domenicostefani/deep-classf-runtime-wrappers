@@ -4,8 +4,8 @@ unset LD_LIBRARY_PATH
 # source /opt/elk/1.0/environment-setup-aarch64-elk-linux
 source /opt/elk/0.11.0/environment-setup-cortexa72-elk-linux  
 
-mkdir -p build-elk
-cd build-elk
+mkdir -p build-aarch64
+cd build-aarch64
 cmake .. -DTFLITE_ENABLE_XNNPACK=OFF
 
 export CXXFLAGS=CXXFLAGS:"-O3 -pipe -ffast-math -feliminate-unused-debug-types -funroll-loops -Wfatal-errors"

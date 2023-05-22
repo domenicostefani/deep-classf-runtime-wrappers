@@ -6,8 +6,8 @@ unset LD_LIBRARY_PATH
 # source /opt/elk/1.0/environment-setup-aarch64-elk-linux     # Release 0.9.0
 source /opt/elk/0.11.0/environment-setup-cortexa72-elk-linux  # Release 0.11.0
 
-mkdir -p build
-cd build
+mkdir -p build-aarch64
+cd build-aarch64
 cmake ..
 
 export CXXFLAGS=CXXFLAGS:"-O3 -pipe -ffast-math -feliminate-unused-debug-types -funroll-loops -Wfatal-errors"

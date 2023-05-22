@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
         const char *execpath_cstr = argv[0];
         std::string execpath(execpath_cstr);
         std::string errormsg = "USAGE:\n"+execpath+" <model path> <features_file> <true_labels_file>\n";
-        fprintf(stderr, errormsg.c_str());
+        fprintf(stderr, "%s", errormsg.c_str());
         return 1;
     }
     const char *modelpath_cstr = argv[1];

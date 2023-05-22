@@ -2,19 +2,18 @@
 ==============================================================================*/
 #include "torchscriptwrapper.h"
 
+#include <algorithm>
+#include <cassert>
 #include <cstdio>
 #include <iostream>
-#include <cassert>
-#include <algorithm>
+#include <limits>  // std::numeric_limits
 #include <utility>
-#include <limits> // std::numeric_limits
 #include <vector>
 
 #include "torch/script.h"
 
 // Definition of the classifier class
-class Classifier
-{
+class Classifier {
 public:
     /** Constructor */
     Classifier(const std::string &filename, bool verbose = false);
@@ -46,13 +45,13 @@ private:
     at::Tensor output_;
 };
 
-Classifier::Classifier(const std::string &filename, bool verbose)
-{
+Classifier::Classifier(const std::string &filename, bool verbose) {
     // Load model
     this->model = loadModel(filename);
 
-    if(verbose)
-        std::cout << "ONNXWRAPPER: Preparing and optimizing model" << std::endl << std::flush;
+    if (verbose)
+        std::cout << "ONNXWRAPPER: Preparing and optimizing model" << std::endl
+                  << std::flush;
 
     // Prepare model for inference and run optimizations
     prepareOptimize(this->model);
@@ -60,9 +59,11 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     storedRequestedInputSize = requestedInputSize(this->model);
     storedRequestedOutputSize = requestedOutputSize(this->model);
 
-    if(verbose) {
-        std::cout << "ONNXWRAPPER: InputSize: "  << storedRequestedInputSize  << std::endl << std::flush;
-        std::cout << "ONNXWRAPPER: OutputSize: " << storedRequestedOutputSize << std::endl << std::flush;
+    if (verbose) {
+        std::cout << "ONNXWRAPPER: InputSize: " << storedRequestedInputSize << std::endl
+                  << std::flush;
+        std::cout << "ONNXWRAPPER: OutputSize: " << storedRequestedOutputSize << std::endl
+                  << std::flush;
     }
 
     // Initialize input Tensor
@@ -79,11 +80,10 @@ Classifier::Classifier(const std::string &filename, bool verbose)
     /*
      * The priming operation should ensure that every allocation performed
      * by the Invoke method is perfomed here and not in the real-time thread.
-    */
+     */
 }
 
-int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses)
-{
+int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses) {
     // Guard to enable inference mode in current scope
     c10::InferenceMode guard;
 
@@ -104,26 +104,15 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     for (size_t i = 0; i < numClasses; ++i)
         outputVector[i] = this->output_[0][i].item<float>();
 
-    // Softmax
-    double tsum = 0;
-    for (size_t i = 0; i < numClasses; ++i)
-        tsum += exp(outputVector[i]);
-    for (size_t i = 0; i < numClasses; ++i)
-        outputVector[i] = exp(outputVector[i]) / tsum;
-
     return argmax(outputVector, numClasses);
 }
 
 /** STEP 1 */
-torch::jit::Module *Classifier::loadModel(const std::string &filename)
-{
+torch::jit::Module *Classifier::loadModel(const std::string &filename) {
     torch::jit::Module module;
-    try
-    {
+    try {
         module = torch::jit::load(filename);
-    }
-    catch (const c10::Error &e)
-    {
+    } catch (const c10::Error &e) {
         std::cerr << ("Error loading the model.\n");
         throw std::logic_error("Error loading the model.");
         // return false; TODO FIX
@@ -133,20 +122,16 @@ torch::jit::Module *Classifier::loadModel(const std::string &filename)
 }
 
 /** STEP 2 */
-void Classifier::prepareOptimize(torch::jit::Module *model)
-{
+void Classifier::prepareOptimize(torch::jit::Module *model) {
     model->eval();
     *model = torch::jit::optimize_for_inference(*model);
 }
 
-int Classifier::argmax(const float vec[], size_t vecSize) const
-{
+int Classifier::argmax(const float vec[], size_t vecSize) const {
     float max = std::numeric_limits<float>::min();
     int argmax = -1;
-    for (size_t i = 0; i < vecSize; ++i)
-    {
-        if (vec[i] > max)
-        {
+    for (size_t i = 0; i < vecSize; ++i) {
+        if (vec[i] > max) {
             argmax = i;
             max = vec[i];
         }
@@ -154,15 +139,14 @@ int Classifier::argmax(const float vec[], size_t vecSize) const
     return argmax;
 }
 
-size_t Classifier::requestedInputSize(const torch::jit::Module *model) const
-{
+size_t Classifier::requestedInputSize(const torch::jit::Module *model) const {
     // get input dimension from the input tensor metadata
     // assuming one input only
     int wanted_size = (*model->parameters().begin()).size(1);
     return wanted_size;
 }
 
-size_t Classifier::requestedOutputSize(const torch::jit::Module *model) const // TODO: Check if optimizable
+size_t Classifier::requestedOutputSize(const torch::jit::Module *model) const  // TODO: Check if optimizable
 {
     auto iter = model->parameters().begin();
     for (size_t i = 0; i < model->parameters().size() - 1; i++)
@@ -172,18 +156,39 @@ size_t Classifier::requestedOutputSize(const torch::jit::Module *model) const //
 }
 
 /***** Handle functions *****/
-ClassifierPtr createClassifier(const std::string &filename, bool verbose)
-{
+ClassifierPtr createClassifier(const std::string &filename, bool verbose) {
     return new Classifier(filename, verbose);
 }
 
-void deleteClassifier(ClassifierPtr cls)
-{
+void deleteClassifier(ClassifierPtr cls) {
     if (cls)
         delete cls;
 }
 
-int classify(ClassifierPtr cls, const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses)
-{
+int classify(ClassifierPtr cls, const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses) {
     return cls->classify_internal(featureVector, numFeatures, outputVector, numClasses);
+}
+
+void softmax(float logitsArray[], size_t numClasses, bool verbose) {
+    if (verbose)
+        std::cout << "Applying softmax..." << std::endl
+                  << std::flush;
+
+    // Subtract Max from logits for stable Softmax https://stackoverflow.com/a/49212689 (TF does this too)
+    float max = logitsArray[0];
+    for (size_t i = 1; i < numClasses; ++i)
+        if (logitsArray[i] > max)
+            max = logitsArray[i];
+    for (size_t i = 0; i < numClasses; ++i)
+        logitsArray[i] -= max;
+
+    float tsum = 0;
+    for (size_t i = 0; i < numClasses; ++i)
+        tsum += exp(logitsArray[i]);
+    for (size_t i = 0; i < numClasses; ++i)
+        logitsArray[i] = exp(logitsArray[i]) / tsum;
+
+    if (verbose)
+        std::cout << "Done." << std::endl
+                  << std::flush;
 }

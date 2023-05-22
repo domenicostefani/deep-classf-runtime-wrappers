@@ -100,15 +100,18 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
         outputVector[i] = outputTensorPtr[i];
 
     if (verbose)
-        std::cout << "classify | Done." << std::endl << std::flush;
+        std::cout << "classify | Done." << std::endl
+                  << std::flush;
 
     int res = argmax(outputVector, numClasses);
 
     if (verbose)
-        std::cout << "classify | Done." << std::endl << std::flush;
+        std::cout << "classify | Done." << std::endl
+                  << std::flush;
     if (verbose) {
         for (size_t i = 0; i < numClasses; ++i)
-            std::cout << "classify | outputVector[" << i << "] :" << outputVector[i] << std::endl << std::flush;
+            std::cout << "classify | outputVector[" << i << "] :" << outputVector[i] << std::endl
+                      << std::flush;
     }
 
     return res;
@@ -181,7 +184,16 @@ int classify(ClassifierPtr cls, const float featureVector[], size_t numFeatures,
 
 void softmax(float logitsArray[], size_t numClasses, bool verbose) {
     if (verbose)
-        std::cout << "Applying softmax..." << std::endl << std::flush;
+        std::cout << "Applying softmax..." << std::endl
+                  << std::flush;
+
+    // Subtract Max from logits for stable Softmax https://stackoverflow.com/a/49212689 (TF does this too)
+    float max = logitsArray[0];
+    for (size_t i = 1; i < numClasses; ++i)
+        if (logitsArray[i] > max)
+            max = logitsArray[i];
+    for (size_t i = 0; i < numClasses; ++i)
+        logitsArray[i] -= max;
 
     float tsum = 0;
     for (size_t i = 0; i < numClasses; ++i)
@@ -190,5 +202,6 @@ void softmax(float logitsArray[], size_t numClasses, bool verbose) {
         logitsArray[i] = exp(logitsArray[i]) / tsum;
 
     if (verbose)
-        std::cout << "Done." << std::endl << std::flush;
+        std::cout << "Done." << std::endl
+                  << std::flush;
 }

@@ -98,7 +98,8 @@ Classifier::Classifier(const std::string &filename, bool verbose) {
             TfLiteIntArray *input_dims = interpreter->tensor(interpreter->inputs()[i])->dims;
             // Print all sizes of the input tensor
             for (int j = 0; j < input_dims->size; ++j) {
-                std::cout << "Input tensor [" << i << "] at interpreter index " << this->interpreter->inputs()[i] << " has dimension " << j << " with size: " << input_dims->data[j] << std::endl << std::flush;
+                std::cout << "Input tensor [" << i << "] at interpreter index " << this->interpreter->inputs()[i] << " has dimension " << j << " with size: " << input_dims->data[j] << std::endl
+                          << std::flush;
             }
             // auto input_size = input_dims->data[input_dims->size - 1];
             // auto input_type = TfLiteTypeGetName(interpreter->tensor(interpreter->inputs()[i])->type);
@@ -126,7 +127,8 @@ Classifier::Classifier(const std::string &filename, bool verbose) {
             TfLiteIntArray *output_dims = interpreter->tensor(interpreter->outputs()[i])->dims;
             auto output_size = output_dims->data[output_dims->size - 1];
             auto output_type = TfLiteTypeGetName(interpreter->tensor(interpreter->outputs()[i])->type);
-            std::cout << "Output tensor [" << i << "] at interpreter index " << this->interpreter->outputs()[i] << " has lenth: " << output_size << " and type: " << output_type << std::endl << std::flush;
+            std::cout << "Output tensor [" << i << "] at interpreter index " << this->interpreter->outputs()[i] << " has lenth: " << output_size << " and type: " << output_type << std::endl
+                      << std::flush;
         }
     }
     this->outputTensorPtr = interpreter->typed_output_tensor<float>(
@@ -177,7 +179,8 @@ Classifier::Classifier(const std::string &filename, bool verbose) {
 int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses, bool verbose) {
     if (verbose) {
         std::cout << "classify | Input size: " << numFeatures << " | Output size: " << numClasses << std::endl;
-        std::cout << "classify | Filling input tensor..." << std::endl << std::flush;
+        std::cout << "classify | Filling input tensor..." << std::endl
+                  << std::flush;
     }
     // Fill `input`.
     for (size_t i = 0; i < numFeatures; ++i) {
@@ -192,37 +195,44 @@ int Classifier::classify_internal(const float featureVector[], size_t numFeature
     // memcpy(this->inputTensorPtr, featureVector, numFeatures*sizeof(float));
 
     if (verbose)
-        std::cout << "classify | Done.\nclassify | Running inference..." << std::endl << std::flush;
+        std::cout << "classify | Done.\nclassify | Running inference..." << std::endl
+                  << std::flush;
 
     // Run inference
     TFLITE_MINIMAL_CHECK(interpreter->Invoke() == kTfLiteOk);
 
     if (verbose)
-        std::cout << "classify | Done.\nclassify | Reading output tensor..." << std::endl << std::flush;
+        std::cout << "classify | Done.\nclassify | Reading output tensor..." << std::endl
+                  << std::flush;
 
     size_t requestedOutSize = requestedOutputSize();
     if (numClasses != requestedOutSize)
         throw std::logic_error("Error, output vector has to have size: " + std::to_string(requestedOutSize) + " (Found " + std::to_string(numClasses) + " instead)");
 
     if (verbose) {
-        std::cout << "classify | Done (size is OK).\nclassify | Copying to array..." << std::endl << std::flush;
+        std::cout << "classify | Done (size is OK).\nclassify | Copying to array..." << std::endl
+                  << std::flush;
 
         for (size_t i = 0; i < numClasses; ++i)
-            std::cout << "classify | outputTensorPtr[" << i << "] :" << outputTensorPtr[i] << std::endl << std::flush;
+            std::cout << "classify | outputTensorPtr[" << i << "] :" << outputTensorPtr[i] << std::endl
+                      << std::flush;
     }
     for (size_t i = 0; i < numClasses; ++i)
         outputVector[i] = outputTensorPtr[i];
 
     if (verbose)
-        std::cout << "classify | Done." << std::endl << std::flush;
+        std::cout << "classify | Done." << std::endl
+                  << std::flush;
 
     int res = argmax(outputVector, numClasses);
 
     if (verbose)
-        std::cout << "classify | Done." << std::endl << std::flush;
+        std::cout << "classify | Done." << std::endl
+                  << std::flush;
     if (verbose) {
         for (size_t i = 0; i < numClasses; ++i)
-            std::cout << "classify | outputVector[" << i << "] :" << outputVector[i] << std::endl << std::flush;
+            std::cout << "classify | outputVector[" << i << "] :" << outputVector[i] << std::endl
+                      << std::flush;
     }
 
     return res;
@@ -361,7 +371,16 @@ size_t getModelOutputSize(ClassifierPtr cls) {
 
 void softmax(float logitsArray[], size_t numClasses, bool verbose) {
     if (verbose)
-        std::cout << "Applying softmax..." << std::endl << std::flush;
+        std::cout << "Applying softmax..." << std::endl
+                  << std::flush;
+
+    // Subtract Max from logits for stable Softmax https://stackoverflow.com/a/49212689 (TF does this too)
+    float max = logitsArray[0];
+    for (size_t i = 1; i < numClasses; ++i)
+        if (logitsArray[i] > max)
+            max = logitsArray[i];
+    for (size_t i = 0; i < numClasses; ++i)
+        logitsArray[i] -= max;
 
     float tsum = 0;
     for (size_t i = 0; i < numClasses; ++i)
@@ -370,5 +389,6 @@ void softmax(float logitsArray[], size_t numClasses, bool verbose) {
         logitsArray[i] = exp(logitsArray[i]) / tsum;
 
     if (verbose)
-        std::cout << "Done." << std::endl << std::flush;
+        std::cout << "Done." << std::endl
+                  << std::flush;
 }
