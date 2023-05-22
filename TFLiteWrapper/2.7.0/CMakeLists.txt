@@ -13,6 +13,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(tensorflow)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(TFLITE_ENABLE_XNNPACK OFF)
+
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")

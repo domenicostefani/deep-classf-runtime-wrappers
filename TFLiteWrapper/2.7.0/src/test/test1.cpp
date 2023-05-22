@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
         const char* scriptn_cstr = argv[0];
         std::string scriptn(scriptn_cstr);
         std::string errmessage = "USAGE:\n"+scriptn+" <model path> \n";
-        fprintf(stderr, errmessage.c_str());
+        fprintf(stderr, "%s", errmessage.c_str());
         return 1;
     }
     const char* filename_cstr = argv[1];
@@ -32,11 +32,11 @@ int main(int argc, char* argv[])
 
     // std::vector<float> my_input_vec = {1.000000,0.001555,-0.342933,-0.006383,-0.236133,-0.013969,0.127167,0.074172,0.154741,-0.037491,-0.046996,0.040371,-0.074079,0.058866,0.081011,-0.059392,-0.078424,-0.009766,0.069354,0.024080,0.031791,0.000453,-0.087566,-0.002964,0.030200}; //TODO: read this from somewhere
     std::array<float,IN_SIZE> my_input_vec;
-    for(int i=0; i<IN_SIZE; ++i)
+    for(size_t i=0; i<IN_SIZE; ++i)
         my_input_vec[i] = 1.0f;
     // std::vector<float> my_output_vec(4,0.0);
     std::array<float,OUT_SIZE> my_output_vec;
-    for(int i=0; i<OUT_SIZE; ++i)
+    for(size_t i=0; i<OUT_SIZE; ++i)
         my_output_vec[i] = 0.0f;
 
     for(int i=0; i<4; ++i)
