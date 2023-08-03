@@ -18,6 +18,7 @@ const size_t N_REPEATED_TESTS = 5;
 
 int main(int argc, char* argv[])
 {
+    srand(time(NULL));
     bool verbose = false;
     if (argc < 2 || argc > 3)
     {
@@ -34,11 +35,11 @@ int main(int argc, char* argv[])
     const char* filename_cstr = argv[1];
     std::string filename(filename_cstr);
 
-    ClassifierPtr tc = createClassifier(filename, verbose);
+    InferenceEngine::InterpreterPtr tc = InferenceEngine::createInterpreter(filename, verbose);
 
     size_t in_rows, in_cols;
-    getModelInputSize2d(tc, in_rows, in_cols);
-    size_t out_size = getModelOutputSize(tc);
+    InferenceEngine::getModelInputSize2d(tc, in_rows, in_cols);
+    size_t out_size = InferenceEngine::getModelOutputSize(tc);
 
     std::cout << "test2d | Model input size: [" << in_rows <<  "," << in_cols << "]" << std::endl;
     std::cout << "test2d | Model output size: " << out_size << std::endl;
@@ -52,7 +53,7 @@ int main(int argc, char* argv[])
     for (size_t i = 0; i < in_rows; ++i) {
         my_input_matrix[i] = new float[in_cols];
         for (size_t j = 0; j < in_cols; ++j) {
-            my_input_matrix[i][j] = 1.0f;
+            my_input_matrix[i][j] = (float)rand() / RAND_MAX;
         }
     }
 
@@ -72,10 +73,17 @@ int main(int argc, char* argv[])
 
     for(size_t i=0; i<N_REPEATED_TESTS; ++i)
     {
+        // Repopulate input vector
+        for (size_t j=0; j<in_rows*in_cols; ++j)
+            my_input_vec[j] = (float)rand() / RAND_MAX;
+
         auto start = std::chrono::high_resolution_clock::now();
 
-        // int result = classifyFlat2D(tc, my_input_vec.data(), in_rows, in_cols, my_output_vec.data(), out_size, verbose);
-        int result = classifyFlat2D(tc, my_input_vec, in_rows, in_cols, my_output_vec, verbose);
+        InferenceEngine::invokeFlat2D(tc, my_input_vec, in_rows, in_cols, my_output_vec, verbose);
+
+        // int result = argmax(my_output_vec);
+        // Find argmax with std::max_element
+        int result = std::distance(my_output_vec.begin(), std::max_element(my_output_vec.begin(), my_output_vec.end()));
 
         auto stop = std::chrono::high_resolution_clock::now();
 
@@ -84,7 +92,7 @@ int main(int argc, char* argv[])
         if (std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() > 1000)
             std::cout << "test2d | (or " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() << "ms)" << std::endl;
     }
-    deleteClassifier(tc);
+    InferenceEngine::deleteInterpreter(tc);
 
     std::cout << "test2d | Test completed successfully                        #" << std::endl;
     return 0;

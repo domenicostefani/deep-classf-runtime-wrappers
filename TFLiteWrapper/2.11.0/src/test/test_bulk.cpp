@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 
 
 
-    ClassifierPtr tc = createClassifier(modelpath);
+    InferenceEngine::InterpreterPtr tc = InferenceEngine::createInterpreter(modelpath);
 
     std::array<float, OUT_SIZE> my_output_vec;
     for (size_t i = 0; i < OUT_SIZE; ++i)
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
     {
         auto start = std::chrono::high_resolution_clock::now();
 
-        int result = classify(tc, featureVectors[i], my_output_vec);
+        int result = InferenceEngine::invoke(tc, featureVectors[i], my_output_vec);
 
         auto stop = std::chrono::high_resolution_clock::now();
 
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
                 std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count());
         y_pred.push_back(result);
     }
-    deleteClassifier(tc);
+    InferenceEngine::deleteInterpreter(tc);
 
 
 

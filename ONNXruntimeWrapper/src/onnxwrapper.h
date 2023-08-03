@@ -1,5 +1,9 @@
 /*
- * torchscript wrapper library
+ * ONNX Runtime Interpreter library
+ * Author: Domenico Stefani (domenico.stefani96@gmail.com)
+ *
+ * This header exposes the functions used to run inference with ONNX Runtime.
+ * To see how to use it, check test_library/main.cpp
  *
  */
 #pragma once
@@ -14,32 +18,75 @@
 #include <utility>
 #include <vector>
 
-class Classifier;                   // Forward definition of the Classifier class
-using ClassifierPtr = Classifier*;  // Opaque pointer for classifier object
+namespace InferenceEngine {
+
+class InterpreterWrap;                   // Forward definition of the InterpreterWrap class
+using InterpreterPtr = InterpreterWrap*;  // Opaque pointer for classifier object
 
 /** Dynamically allocate an instance of a classifier object (do not use in real time threads!) */
-ClassifierPtr createClassifier(const std::string& filename, bool verbose = false);
-
-/** Feed a feature array (C Array) to the model, perform inference and return the prediction */
-int classify(ClassifierPtr cls, const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses);
-
-/** Feed a feature array (C++ std Array) to the model, perform inference and return the prediction */
-template <std::size_t IN_SIZE, std::size_t OUT_SIZE>
-int classify(ClassifierPtr cls, std::array<float, IN_SIZE>& featureArray, std::array<float, OUT_SIZE>& outputArray) {
-    const float* fa = &(featureArray[0]);
-    float* oa = &(outputArray[0]);
-    return classify(cls, fa, (size_t)IN_SIZE, oa, (size_t)OUT_SIZE);
-}
-
-/** Free the classifier memory (do not use in real time threads) */
-void deleteClassifier(ClassifierPtr cls);
+InterpreterPtr createInterpreter(const std::string& filename, bool verbose = false);
 
 /**
- * @brief Apply softmax to a logits array
- * Apply softmax to a logits array when using networks that do not have a softmax output layer
+ * @brief Dynamically allocate an instance of a Interpreter object from Buffer(do not use in real time threads!)
  *
- * @param logitsArray Array of logits
- * @param numClasses Number of classes (or size of the array)
- * @param verbose Whether to print debug messages
+ * @param buffer Caller-owned buffer containing the model
+ * @param verbose  verbose mode (to disable in real time threads)
+ * @return InterpreterPtr
  */
-void softmax(float logitsArray[], size_t numClasses, bool verbose = true);
+InterpreterPtr createInterpreterFromBuffer(const char* buffer, size_t bufferSize, bool verbose = false);
+
+/** Feed a feature array (C Array) to the model, perform inference and return the prediction */
+void invoke(InterpreterPtr cls, const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses);
+
+/**
+ * @brief Feed a feature array (C++ std Array) to the model, perform inference and return the prediction
+ * This function is used to invoke the interpreter on a specific input vector. The input vector is passed as a std::array<float,IN_SIZE>.
+ * The function does not allocate memory, it just passes the pointer to the first element of the array with the .data() method.
+ *
+ * @tparam IN_SIZE
+ * @tparam OUT_SIZE
+ * @param inp
+ * @param featureArray
+ * @param outputArray
+ * @return int  Classification result
+ */
+template <std::size_t IN_SIZE, std::size_t OUT_SIZE>
+void invoke(InterpreterPtr inp, std::array<float, IN_SIZE>& featureArray, std::array<float, OUT_SIZE>& outputArray) {
+    invoke(inp, featureArray.data(), (size_t)IN_SIZE, outputArray.data(), (size_t)OUT_SIZE);
+}
+
+/**
+ * @brief Feed a feature array (C++ std Vector) to the model, perform inference and return the prediction
+ * This function is used to invoke the interpreter on a specific input vector. The input vector is passed as a std::vector<float>.
+ * This is particularly useful when the input size is not known at compile time, expecially for test code.
+ * A vector of random test data can be created with the help of getModelInputSize1d and passed to this function.
+ *
+ * @param inp           Interpreter object
+ * @param inputVector Input vector
+ * @param outputVector  Output vector
+ * @return int          Classification result
+ */
+void invoke(InterpreterPtr inp, std::vector<float>& inputVector, std::vector<float>& outputVector);
+
+
+
+/** Free the classifier memory (do not use in real time threads) */
+void deleteInterpreter(InterpreterPtr cls);
+
+/**
+ * @brief Get the Input size of the model
+ * 
+ * @param inp 
+ * @return size_t 
+ */
+size_t getModelInputSize1d(InterpreterPtr inp);
+
+/**
+ * @brief Get the Output size of the model
+ * 
+ * @param inp 
+ * @return size_t 
+ */
+size_t getModelOutputSize(InterpreterPtr inp);
+
+}  // namespace InferenceEngine

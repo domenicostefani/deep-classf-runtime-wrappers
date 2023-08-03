@@ -16,18 +16,25 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(libs/onnxruntime/include)
-include_directories(libs/onnxruntime/include/onnxruntime/core/session/)
+# include_directories(libs/onnxruntime/include/onnxruntime/core/session/)
 
 ADD_LIBRARY(${LIB_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/onnxwrapper.cpp)
 
-target_link_libraries(${LIB_NAME} ${CMAKE_SOURCE_DIR}/libs/onnxruntime1.7.0_aarch64build/libonnxruntime.so.1.7.0)
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+    message(STATUS "Building for aarch64")
+    target_link_libraries(${LIB_NAME} ${CMAKE_SOURCE_DIR}/libs/onnxruntime/lib_aarch64/libonnxruntime.so.1.7.0)
+else ()
+    message(STATUS "Building for x86-64")
+    target_link_libraries(${LIB_NAME} ${CMAKE_SOURCE_DIR}/libs/onnxruntime/lib_x86-64/libonnxruntime.so.1.7.0)
+# target_link_libraries(${LIB_NAME} ${CMAKE_SOURCE_DIR}/libs/onnxruntime/lib_x86-64/libonnxruntime.so.1.7.0)
+endif ()
 
 # CMake instructions to test using the static lib
-SET(APP_EXE test-onnx-lib)
+SET(APP_EXE test-onnx-base)
 
 ADD_EXECUTABLE(${APP_EXE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testlib.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test/test_base.cpp)
 
 TARGET_LINK_LIBRARIES(${APP_EXE}
     ${LIB_NAME})

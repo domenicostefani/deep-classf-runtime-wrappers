@@ -14,6 +14,8 @@
 
 const std::size_t OUT_SIZE = 8;
 
+const bool VERBOSE_CREATE = true;
+
 #include <iostream>
 #include <fstream>
 #include <istream>
@@ -215,9 +217,7 @@ int main(int argc, char *argv[])
     else
         throw std::logic_error("Unable to open file");
 
-
-
-    ClassifierPtr tc = createClassifier(modelpath, true);
+    InferenceEngine::InterpreterPtr tc = InferenceEngine::createInterpreter(modelpath, VERBOSE_CREATE);
 
     std::array<float, OUT_SIZE> my_output_vec;
     for (size_t i = 0; i < OUT_SIZE; ++i)
@@ -228,7 +228,8 @@ int main(int argc, char *argv[])
     {
         auto start = std::chrono::high_resolution_clock::now();
 
-        int result = classify(tc, &(featureVectors[i][0]), featureVectors[i].size(), &(my_output_vec[0]), my_output_vec.size());
+        InferenceEngine::invoke(tc, &(featureVectors[i][0]), featureVectors[i].size(), &(my_output_vec[0]), my_output_vec.size());
+        int result = std::distance(my_output_vec.begin(), std::max_element(my_output_vec.begin(), my_output_vec.end()));
 
         auto stop = std::chrono::high_resolution_clock::now();
 
@@ -238,7 +239,7 @@ int main(int argc, char *argv[])
                 std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count());
         y_pred.push_back(result);
     }
-    deleteClassifier(tc);
+    InferenceEngine::deleteInterpreter(tc);
 
 
 

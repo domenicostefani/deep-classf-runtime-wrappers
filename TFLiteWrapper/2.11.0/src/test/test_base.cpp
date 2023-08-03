@@ -28,10 +28,10 @@ int main(int argc, char* argv[])
     const char* filename_cstr = argv[1];
     std::string filename(filename_cstr);
 
-    ClassifierPtr tc = createClassifier(filename, VERBOSE_CREATE);
+    InferenceEngine::InterpreterPtr tc = InferenceEngine::createInterpreter(filename, VERBOSE_CREATE);
 
-    size_t in_size = getModelInputSize1d(tc);
-    size_t out_size = getModelOutputSize(tc);
+    size_t in_size = InferenceEngine::getModelInputSize1d(tc);
+    size_t out_size = InferenceEngine::getModelOutputSize(tc);
 
     std::cout << "Model input size: " << in_size << std::endl;
     std::cout << "Model output size: " << out_size << std::endl;
@@ -50,20 +50,22 @@ int main(int argc, char* argv[])
     for(size_t i=0; i<4; ++i)
     {
         auto start = std::chrono::high_resolution_clock::now();
-        int result = classify(tc,my_input_vec,my_output_vec);
+        InferenceEngine::invoke(tc,my_input_vec,my_output_vec);
+        int result = std::distance(my_output_vec.begin(), std::max_element(my_output_vec.begin(), my_output_vec.end()));
+
         // int result = classify(tc,my_input_vec,my_output_vec,VERBOSE_CLASSIFY);
         // int result = thisisatest();
         auto stop = std::chrono::high_resolution_clock::now();
 
         // Print output vector
         for(size_t i=0; i<out_size; ++i)
-            printf("Output vector %zu: %f", i, my_output_vec[i]);
+            printf("Output vector %zu: %f\n", i, my_output_vec[i]);
 
         printf("Predicted class %d confidence: %f\n", result, my_output_vec[result]);
         std::cout << "It took " << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << "us" << std::endl;
         std::cout << "(or " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() << "ms)" << std::endl;
     }
-    deleteClassifier(tc);
+    InferenceEngine::deleteInterpreter(tc);
 
     std::cout << std::endl << std::endl;
     std::cout << "#----------------------------------------------------#" << std::endl;

@@ -1,5 +1,8 @@
 /*
-==============================================================================*/
+ * ONNX Runtime Interpreter library
+ * Author: Domenico Stefani (domenico.stefani96@gmail.com)
+ *
+ */
 #include "onnxwrapper.h"
 
 #include <algorithm>
@@ -15,6 +18,8 @@
 #include <vector>
 
 #include "onnxruntime_cxx_api.h"
+
+namespace InferenceEngine {
 
 /** Function to perform the product of the elements of a vector */
 template <typename T>
@@ -38,28 +43,33 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &v) {
     return os;
 }
 
-// Definition of the classifier class
-class Classifier {
+// Definition of the Interpreter class
+class InterpreterWrap {
 public:
     /** Constructor */
-    Classifier(const std::string &filename, bool verbose = false);
-    /** Destructor */
-    ~Classifier();
-    /** Internal classification function, called by wrappers */
-    int classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses);
+    InterpreterWrap(const std::string &filename, bool verbose = false);            // Construct from file path
+    InterpreterWrap(const char *buffer, size_t bufferSize, bool verbose = false);  // Construct from buffer
+    void buildAndPrime(bool verbose = false);                                      // Build and prime the interpreter | Common part to the two constructors
 
+    /** Destructor */
+    ~InterpreterWrap();
+    /** Internal interpreter invocation function, called by wrappers */
+    void invoke_internal(const float inputVector[], size_t inputSize, float outputVector[], size_t outputSize, bool verbose = false);
+
+
+    size_t getInputTensorSize() const { return inputTensorSize; }    // Get the size of the input tensor
+    size_t getOutputTensorSize () const { return outputTensorSize; } // Get the size of the output tensor
 private:
+    size_t inputTensorSize;
+    size_t outputTensorSize;
+
     /** Load the .onnx model and create inference session */
     Ort::Session *loadModel(const std::string &filename);
-
-    /** ind the index of the maximum value in an array */
-    int argmax(const float vec[], size_t vecSize) const;
+    Ort::Session *loadModelFromBuffer(const char *buffer, size_t bufferSize);
 
     //--------------------------------------------------------------------------
     Ort::Session *session;
 
-    size_t inputTensorSize;
-    size_t outputTensorSize;
     std::vector<float> inputTensorValues;
     std::vector<float> outputTensorValues;
     std::vector<const char *> inputNames;
@@ -68,7 +78,7 @@ private:
     std::vector<Ort::Value> outputTensors;
 };
 
-Classifier::Classifier(const std::string &filename, bool verbose) {
+InterpreterWrap::InterpreterWrap(const std::string &filename, bool verbose) {
     // Load model
     if (verbose) {
         std::cout << std::setfill('-') << std::setw(40) << "" << std::endl;
@@ -79,6 +89,23 @@ Classifier::Classifier(const std::string &filename, bool verbose) {
         std::cout << "Model loaded successfully." << std::endl;
         std::cout << "File: " << filename << std::endl;
     }
+    buildAndPrime(verbose);
+}
+
+InterpreterWrap::InterpreterWrap(const char *buffer, size_t bufferSize, bool verbose) {
+    // Load model
+    if (verbose) {
+        std::cout << std::setfill('-') << std::setw(40) << "" << std::endl;
+        std::cout << "Creating environment..." << std::endl;
+    }
+    this->session = loadModelFromBuffer(buffer, bufferSize);
+    if (verbose) {
+        std::cout << "Model created from buffer." << std::endl;
+    }
+    buildAndPrime(verbose);
+}
+
+void InterpreterWrap::buildAndPrime(bool verbose) {
 
     Ort::AllocatorWithDefaultOptions allocator;
 
@@ -140,39 +167,37 @@ Classifier::Classifier(const std::string &filename, bool verbose) {
     std::vector<float> pIv(inputTensorSize);
     std::vector<float> pOv(outputTensorSize);
 
-    this->classify_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
+    this->invoke_internal(&pIv[0], pIv.size(), &pOv[0], pOv.size());
     /*
      * The priming operation should ensure that every allocation performed
      * by the Run method is perfomed here and not in the real-time thread.
      */
 }
 
-Classifier::~Classifier() {
+InterpreterWrap::~InterpreterWrap() {
     delete this->session;
 }
 
-int Classifier::classify_internal(const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses) {
-    if (numFeatures != inputTensorSize)
-        throw std::logic_error("Error, input vector has to have size: " + std::to_string(inputTensorSize) + " (Found " + std::to_string(numFeatures) + " instead)");
+void InterpreterWrap::invoke_internal(const float inputVector[], size_t inputSize, float outputVector[], size_t outputSize, bool verbose) {
+    if (inputSize != inputTensorSize)
+        throw std::logic_error("Error, input vector has to have size: " + std::to_string(inputTensorSize) + " (Found " + std::to_string(inputSize) + " instead)");
 
     // Fill `input`.
-    for (size_t i = 0; i < numFeatures; ++i)
-        inputTensorValues[i] = featureVector[i];
+    for (size_t i = 0; i < inputSize; ++i)
+        inputTensorValues[i] = inputVector[i];
 
     // Run inference
     this->session->Run(Ort::RunOptions{nullptr}, inputNames.data(), inputTensors.data(), 1, outputNames.data(), outputTensors.data(), 1);
 
-    if (numClasses != outputTensorSize)
-        throw std::logic_error("Error, output vector has to have size: " + std::to_string(outputTensorSize) + " (Found " + std::to_string(numClasses) + " instead)");
+    if (outputSize != outputTensorSize)
+        throw std::logic_error("Error, output vector has to have size: " + std::to_string(outputTensorSize) + " (Found " + std::to_string(outputSize) + " instead)");
 
     // Copy output
-    for (size_t i = 0; i < numClasses; ++i)
+    for (size_t i = 0; i < outputSize; ++i)
         outputVector[i] = outputTensorValues.at(i);
-
-    return argmax(outputVector, numClasses);
 }
 
-Ort::Session *Classifier::loadModel(const std::string &filename) {
+Ort::Session* InterpreterWrap::loadModel(const std::string &filename) {
     static Ort::Env env;  //()ORT_LOGGING_LEVEL_WARNING, "onnx-test");
     Ort::SessionOptions session_options;
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
@@ -180,28 +205,53 @@ Ort::Session *Classifier::loadModel(const std::string &filename) {
     return new Ort::Session(env, filename.c_str(), session_options);
 }
 
-int Classifier::argmax(const float vec[], size_t vecSize) const {
-    float max = std::numeric_limits<float>::min();
-    int argmax = -1;
-    for (size_t i = 0; i < vecSize; ++i) {
-        if (vec[i] > max) {
-            argmax = i;
-            max = vec[i];
-        }
-    }
-    return argmax;
+
+Ort::Session* InterpreterWrap::loadModelFromBuffer(const char *buffer, size_t bufferSize) {
+    static Ort::Env env;  //()ORT_LOGGING_LEVEL_WARNING, "onnx-test");
+    Ort::SessionOptions session_options;
+    session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+    session_options.SetOptimizedModelFilePath("/tmp/optimized_model.onnx.tmp");
+    return new Ort::Session(env, buffer, bufferSize, session_options);
 }
 
 /***** Handle functions *****/
-ClassifierPtr createClassifier(const std::string &filename, bool verbose) {
-    return new Classifier(filename, verbose);
+InterpreterPtr createInterpreter(const std::string &filename, bool verbose) {
+    return new InterpreterWrap(filename, verbose);
 }
 
-void deleteClassifier(ClassifierPtr cls) {
+InterpreterPtr createInterpreterFromBuffer(const char *buffer, size_t bufferSize, bool verbose) {
+    InterpreterPtr res = new InterpreterWrap(buffer, bufferSize, verbose);
+    return res;
+}
+
+void deleteInterpreter(InterpreterPtr cls) {
     if (cls)
         delete cls;
 }
 
-int classify(ClassifierPtr cls, const float featureVector[], size_t numFeatures, float outputVector[], size_t numClasses) {
-    return cls->classify_internal(featureVector, numFeatures, outputVector, numClasses);
+void invoke(InterpreterPtr cls, const float featureVector[], size_t inputSize, float outputVector[], size_t outputSize) {
+    cls->invoke_internal(featureVector, inputSize, outputVector, outputSize);
 }
+
+void invoke(InterpreterPtr inp, std::vector<float> &inputVector, std::vector<float> &outputVector) {
+    if (inputVector.size() != getModelInputSize1d(inp)) {
+        std::cerr << "Interpreter\t|\tinvoke\t| Input vector size does not match model input size (" << inputVector.size() << " != " << getModelInputSize1d(inp) << ")" << std::endl;
+        throw std::runtime_error(("Input vector size does not match model input size (" + std::to_string(inputVector.size()) + " != " + std::to_string(getModelInputSize1d(inp)) + ")").c_str());
+    }
+    if (outputVector.size() != getModelOutputSize(inp)) {
+        std::cerr << "Interpreter\t|\tinvoke\t| Output vector size does not match model output size (" << outputVector.size() << " != " << getModelOutputSize(inp) << ")" << std::endl;
+        throw std::runtime_error(("Output vector size does not match model output size (" + std::to_string(outputVector.size()) + " != " + std::to_string(getModelOutputSize(inp)) + ")").c_str());
+    }
+    invoke(inp, inputVector.data(), (size_t)inputVector.size(), outputVector.data(), (size_t)outputVector.size());
+}
+
+
+size_t getModelInputSize1d(InterpreterPtr inp) {
+    return inp->getInputTensorSize();
+}
+
+size_t getModelOutputSize(InterpreterPtr inp) {
+    return inp->getOutputTensorSize();
+}
+
+}  // namespace InferenceEngine
